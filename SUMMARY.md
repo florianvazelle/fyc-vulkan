@@ -11,5 +11,6 @@
   * [Débogage](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/validation-layers.md)
   * [Window](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/window.md)
   * [Device](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/device.md)
+  * [Render Pass](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/render-pass.md)
 * [Conclusion](a-la-decouverte-de-vulkan-1/conclusion.md)
 
