@@ -50,6 +50,43 @@ const VkSubpassDescription subpassSwapChain = {
 };
 ```
 
+## Dépendance
+
+Les subpasses s'occupent automatiquement de la transition de l'organisation des images. Ces transitions sont contrôlées par des _subpass dependencies_. Elles indiquent la mémoire et l'exécution entre les subpasses. Nous n'avons certes qu'une seule subpasse pour le moment, mais les opérations avant et après cette subpasse comptent aussi comme des subpasses implicites.
+
+Il existe deux dépendances préexistantes capables de gérer les transitions au début et à la fin de la render pass. Le problème est que cette première dépendance ne s'exécute pas au bon moment. Elle part du principe que la transition de l'organisation de l'image doit être réalisée au début de la pipeline, mais dans notre programme l'image n'est pas encore acquise à ce moment! Il existe deux manières de régler ce problème. Nous pourrions changer `waitStages` pour `imageAvailableSemaphore` à `VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT` pour être sûrs que la pipeline ne commence pas avant que l'image ne soit acquise, mais nous perdrions en performance car les shaders travaillant sur les vertices n'ont pas besoin de l'image. Il faudrait faire quelque chose de plus subtil. Nous allons donc plutôt faire attendre la render pass à l'étape `VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT` et faire la transition à ce moment. Cela nous donne de plus une bonne excuse pour s'intéresser au fonctionnement des subpass dependencies.
+
+Celles-ci sont décrites dans une structure de type [`VkSubpassDependency`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkSubpassDependency.html). Créez en une dans la fonction `createRenderPass` :
+
+```text
+VkSubpassDependency dependency{};
+dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+dependency.dstSubpass = 0;
+```
+
+Les deux premiers champs permettent de fournir l'indice de la subpasse d'origine et de la subpasse d'arrivée. La valeur particulière `VK_SUBPASS_EXTERNAL` réfère à la subpass implicite soit avant soit après la render pass, selon que cette valeur est indiquée dans respectivement `srcSubpass` ou `dstSubpass`. L'indice `0` correspond à notre seule et unique subpasse. La valeur fournie à `dstSubpass` doit toujours être supérieure à `srcSubpass` car sinon une boucle infinie peut apparaître \(sauf si une des subpasse est `VK_SUBPASS_EXTERNAL`\).
+
+```text
+dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+dependency.srcAccessMask = 0;
+```
+
+Les deux paramètres suivants indiquent les opérations à attendre et les étapes durant lesquelles les opérations à attendre doivent être considérées. Nous voulons attendre la fin de l'extraction de l'image avant d'y accéder, hors ceci est déjà configuré pour être synchronisé avec l'étape d'écriture sur l'attachement. C'est pourquoi nous n'avons qu'à attendre à cette étape.
+
+```text
+dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+```
+
+Nous indiquons ici que les opérations qui doivent attendre pendant l'étape liée à l'attachement de couleur sont celles ayant trait à l'écriture. Ces paramètres permettent de faire attendre la transition jusqu'à ce qu'elle soit possible, ce qui correspond au moment où la passe accède à cet attachement puisqu'elle est elle-même configurée pour attendre ce moment.
+
+```text
+renderPassInfo.dependencyCount = 1;
+renderPassInfo.pDependencies = &dependency;
+```
+
+Nous fournissons enfin à la structure ayant trait à la render pass un tableau de configurations pour les subpass dependencies.
+
 ## Création du render pass
 
 Maintenant que nous avons créé notre attachment et une subpass, nous pouvons maintenant créer la render pass. Pour cela il faut créer une nouvelle variable du type `VkRenderPass` :
