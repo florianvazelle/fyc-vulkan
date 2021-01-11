@@ -2,14 +2,19 @@
 
 {% tabs %}
 {% tab title="Questions" %}
-1\) Pourquoi Vulkan ?
+{% hint style="info" %}
+Une seule réponse est correct.
+{% endhint %}
 
-* [ ] a\)
-* [ ] b\)
+1\) Qu'elle est l'objet qui contient toute les données de notre application Vulkan ?
+
+* a. Une Instance
+* b. Un Device
+* c. 
 {% endtab %}
 
 {% tab title="Réponses" %}
-1\) a
+1\) Réponse a
 {% endtab %}
 {% endtabs %}
 
