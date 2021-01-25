@@ -56,3 +56,7 @@ Instance::Instance(const char* appName, const char* engineName)
 Instance::~Instance() { vkDestroyInstance(m_instance, nullptr); }
 ```
 
+**Vidéo / Code :**
+
+{% file src="../../.gitbook/assets/part-3-instance.cpp" %}
+

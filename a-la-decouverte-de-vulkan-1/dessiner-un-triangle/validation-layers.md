@@ -85,3 +85,9 @@ if (validationLayers) {
 }
 ```
 
+**Vidéo / Code :**
+
+{% file src="../../.gitbook/assets/part-4-validation-layers.cpp" %}
+
+
+
