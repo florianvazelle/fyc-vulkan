@@ -18,7 +18,7 @@
   * [Frame Buffers](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/frame-buffers.md)
   * [Command Buffers](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/command-buffers.md)
 * [Pour aller plus loin](a-la-decouverte-de-vulkan-1/pour-aller-plus-loin.md)
-* [Conclusion](a-la-decouverte-de-vulkan-1/conclusion.md)
+* [Références](a-la-decouverte-de-vulkan-1/references.md)
 
 ## Exercices
 

@@ -1,6 +1,4 @@
-# Conclusion
-
-## Références
+# Références
 
 * [Template Vulkan](https://github.com/florianvazelle/VulkanStarter)
 * [Tutoriel API Vulkan](https://vulkan-tutorial.com/)
