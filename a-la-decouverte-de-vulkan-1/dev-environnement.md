@@ -29,3 +29,9 @@ Vulkan n'inclut pas non plus de bibliothèque pour les opérations d'algèbre li
 
 Vulkan permet d’utiliser des shaders de tout type, à la condition qu’ils soient compilés dans le langage intermédiaire SPIR-V. Il existe plusieurs façon de compiler les shaders, dans ce tutoriel, nous allons utiliser la commande glslangValidator fourni par le projet glslang du KhronosGroup.
 
+**Vidéo :**
+
+{% embed url="https://youtu.be/5ViBDYaEz-g" %}
+
+\*\*\*\*
+

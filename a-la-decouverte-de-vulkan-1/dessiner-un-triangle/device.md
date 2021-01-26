@@ -1,14 +1,12 @@
 # Device
 
-## Logical
+## Physical
 
 
 
 **Vidéo / Code :**
 
-{% file src="../../.gitbook/assets/part-6-logical-device-et-queues.cpp" %}
-
-## Physical
+## Logical
 
 
 

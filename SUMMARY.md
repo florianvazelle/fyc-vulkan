@@ -7,6 +7,7 @@
 * [Histoire](a-la-decouverte-de-vulkan-1/sujet.md)
 * [Environnement de développement](a-la-decouverte-de-vulkan-1/dev-environnement.md)
 * [Dessiner un triangle](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/README.md)
+  * [Code de base](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/code-de-base.md)
   * [Instance](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/instance.md)
   * [Débogage](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/validation-layers.md)
   * [Device](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/device.md)
