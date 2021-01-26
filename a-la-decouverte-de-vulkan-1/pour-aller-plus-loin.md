@@ -10,7 +10,7 @@ Un dernier concept pour la route, qui va nous permettre de décrire et d'envoyé
 
 ## DescriptorLayout
 
-Nous devons fournir des informations sur chacun des descripteurs utilisés par les shaders lors de la création de la pipeline. Nous allons créer une fonction pour gérer toute cette information, et ainsi pour créer le set de descripteurs.
+Pour commencer il faut créer un descriptor layout qui va permettre de fournir des informations sur chacun des descripteurs utilisés par les shaders lors de la création de la pipeline. Nous allons créer une fonction pour gérer toute cette information, et ainsi pour créer le set de descripteurs.
 
 ```cpp
 void initVulkan() {
@@ -143,7 +143,7 @@ if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SU
 }
 ```
 
-La pool doit être recrée en même temps que la swap chain. On va donc la détruire dans `cleanupSwapChain`.
+La pool doit être recréée en même temps que la swap chain. On va donc la détruire dans `cleanupSwapChain`.
 
 ```cpp
 void cleanupSwapChain() {
@@ -247,7 +247,7 @@ Le dernier champ que nous allons utiliser est `pBufferInfo`. Il permet de fourni
 descriptorWrite.pBufferInfo = &bufferInfo;
 ```
 
-Enfin, nous mettons à jour notre DescriptorSet.
+Enfin, nous mettons à jour notre descripteur set.
 
 ```cpp
 vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
