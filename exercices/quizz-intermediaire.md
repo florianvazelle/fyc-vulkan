@@ -6,7 +6,7 @@
 Une seule réponse est correct.
 {% endhint %}
 
-1\) Quelle est l'année de sortie d'OpenGL
+1\) Quelle est l'année de sortie d'OpenGL ?
 
 * a. 1995
 * b. 1990
