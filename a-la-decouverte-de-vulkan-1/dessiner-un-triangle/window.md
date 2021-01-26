@@ -1,6 +1,6 @@
 # Window
 
-Vulkan ignore la plateforme sur laquelle il opère et ne peut donc pas directement établir d'interface avec le gestionnaire de fenêtres. Nous verrons dans ce chapitre l'extension `VK_KHR_surface`. Nous pourrons ainsi obtenir l'objet `VkSurfaceKHR`, qui est un type abstrait de surface sur lequel nous pourrons effectuer des rendus. Cette surface sera en lien avec la fenêtre que nous avons créée grâce à GLFW.
+Vulkan ignore la plateforme sur laquelle il opère et ne peut donc pas directement établir d'interface avec le gestionnaire de fenêtres. Pour créer une interface permettant de présenter les rendus à l'écran, nous devons utiliser l'extension WSI \(Window System Integration\). Nous verrons dans ce chapitre l'extension `VK_KHR_surface`. Nous pourrons ainsi obtenir l'objet `VkSurfaceKHR`, qui est un type abstrait de surface sur lequel nous pourrons effectuer des rendus. Cette surface sera en lien avec la fenêtre que nous avons créée grâce à GLFW.
 
 L'extension `VK_KHR_surface`, qui se charge au niveau de l'instance, a déjà été ajoutée, car elle fait partie des extensions retournées par la fonction `glfwGetRequiredInstanceExtensions`.
 
@@ -42,6 +42,86 @@ void cleanup() {
     ...
 }
 ```
+
+## Queue & Queue Family
+
+### Demander le support pour la présentation
+
+Bien que l'implémentation de Vulkan supporte le WSI, il est possible que d'autres éléments du système ne le supportent pas. Nous devons nous s'assure que le logical device puisse présenter les rendus à la surface que nous avons créée. La présentation est spécifique aux queues families, ce qui signifie que nous devons en fait trouver une queue family supportant cette présentation.
+
+Il est possible que les queues families supportant les commandes d'affichage et celles supportant les commandes de présentation ne soient pas les mêmes, nous devons donc considérer que ces deux queues sont différentes. En fait, les spécificités des queues families diffèrent majoritairement entre les vendeurs, et assez peu entre les modèles d'une même série. Nous devons donc étendre la structure `QueueFamilyIndices` :
+
+```cpp
+struct QueueFamilyIndices {
+    std::optional<uint32_t> graphicsFamily;
+    std::optional<uint32_t> presentFamily;
+
+    bool isComplete() {
+        return graphicsFamily.has_value() && presentFamily.has_value();
+    }
+};
+```
+
+Nous devons ensuite modifier la fonction `findQueueFamilies` pour qu'elle cherche une queue family pouvant supporter les commandes de présentation. La fonction qui nous sera utile pour cela est `vkGetPhysicalDeviceSurfaceSupportKHR`. Elle possède quatre paramètres, le physical device, un indice de queue family, la surface et un booléen. Appelez-la depuis la même boucle que pour `VK_QUEUE_GRAPHICS_BIT` :
+
+```cpp
+VkBool32 presentSupport = false;
+vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+```
+
+Vérifiez simplement la valeur du booléen et stockez la queue dans la structure si elle est intéressante :
+
+```cpp
+if (presentSupport) {
+    indices.presentFamily = i;
+}
+```
+
+### Création de la queue de présentation
+
+Il nous reste à modifier la création du logical device pour extraire de celui-ci la référence à une presentation queue [`VkQueue`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkQueue.html). Ajoutez un membre donnée pour cette référence :
+
+```cpp
+VkQueue presentQueue;
+```
+
+Nous avons besoin de plusieurs structures [`VkDeviceQueueCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceQueueCreateInfo.html), une pour chaque queue family. Une manière de gérer ces structures est d'utiliser un `set` contenant tous les indices des queues et un `vector` pour les structures :
+
+```cpp
+#include <set>
+
+...
+
+QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+
+std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+
+float queuePriority = 1.0f;
+for (uint32_t queueFamily : uniqueQueueFamilies) {
+    VkDeviceQueueCreateInfo queueCreateInfo{};
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo.queueFamilyIndex = queueFamily;
+    queueCreateInfo.queueCount = 1;
+    queueCreateInfo.pQueuePriorities = &queuePriority;
+    queueCreateInfos.push_back(queueCreateInfo);
+}
+```
+
+Puis modifiez [`VkDeviceCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceCreateInfo.html) pour qu'il pointe sur le contenu du vector :
+
+```cpp
+createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+createInfo.pQueueCreateInfos = queueCreateInfos.data();
+```
+
+Si les queues sont les mêmes, nous n'avons besoin de les indiquer qu'une seule fois, ce dont le set s'assure. Ajoutez enfin un appel pour récupérer les queue families :
+
+```cpp
+vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+```
+
+Si les queues sont les mêmes, les variables contenant les références contiennent la même valeur. Dans le prochain chapitre nous nous intéresserons aux swap chain, et verrons comment elle permet de présenter les rendus à l'écran.
 
 **Vidéo / Code :**
 
