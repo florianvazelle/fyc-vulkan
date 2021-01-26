@@ -60,14 +60,14 @@ Une seule réponse est correct.
 9\) Quelle sont les deux types d'erreurs que distinct Vulkan ?
 
 * a. Erreurs de débordement et d'asséchement
-* b.  Erreurs de plage et de format
+* b. Erreurs de plage et de format
 * c. Erreurs de validité et d'éxécution
 
 10\) Que permet la SwapChain ?
 
 * a. Permettre à Vulkan de dessiner une image
 * b. Synchroniser la présentation avec le rafraîchissement de l'écran
-* c. Échanger des Chaînes
+* c. Échanger des chaînes
 {% endtab %}
 
 {% tab title="Réponses" %}
