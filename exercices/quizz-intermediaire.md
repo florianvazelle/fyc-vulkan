@@ -50,7 +50,24 @@ Une seule réponse est correct.
 * a. Oui
 * b. Non
 
-8\) 
+8\) Quelle outil permet de compiler un shader GLSL en SPIR-V ?
+
+* a. glslang
+* b. CMake
+* c. Vulkan
+* d. OpenGLSL
+
+9\) Quelle sont les deux types d'erreurs que distinct Vulkan ?
+
+* a. Erreurs de débordement et d'asséchement
+* b.  Erreurs de plage et de format
+* c. Erreurs de validité et d'éxécution
+
+10\) Que permet la SwapChain ?
+
+* a. Permettre à Vulkan de dessiner une image
+* b. Synchroniser la présentation avec le rafraîchissement de l'écran
+* c. Échanger des Chaînes
 {% endtab %}
 
 {% tab title="Réponses" %}
@@ -67,6 +84,12 @@ Une seule réponse est correct.
 6\) Réponse c
 
 7\) Réponse a
+
+8\) Réponse a
+
+9\) Réponse c
+
+10\) Réponse b
 {% endtab %}
 {% endtabs %}
 
