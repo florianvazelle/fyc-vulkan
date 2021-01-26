@@ -79,13 +79,13 @@ if (presentSupport) {
 
 ### Création de la queue de présentation
 
-Il nous reste à modifier la création du logical device pour extraire de celui-ci la référence à une presentation queue [`VkQueue`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkQueue.html). Ajoutez un membre donnée pour cette référence :
+Il nous reste à modifier la création du logical device pour extraire de celui-ci la référence à une presentation queue `VkQueue`. Ajoutez un membre donnée pour cette référence :
 
 ```cpp
 VkQueue presentQueue;
 ```
 
-Nous avons besoin de plusieurs structures [`VkDeviceQueueCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceQueueCreateInfo.html), une pour chaque queue family. Une manière de gérer ces structures est d'utiliser un `set` contenant tous les indices des queues et un `vector` pour les structures :
+Nous avons besoin de plusieurs structures `VkDeviceQueueCreateInfo`, une pour chaque queue family. Une manière de gérer ces structures est d'utiliser un `set` contenant tous les indices des queues et un `vector` pour les structures :
 
 ```cpp
 #include <set>
@@ -108,7 +108,7 @@ for (uint32_t queueFamily : uniqueQueueFamilies) {
 }
 ```
 
-Puis modifiez [`VkDeviceCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceCreateInfo.html) pour qu'il pointe sur le contenu du vector :
+Puis modifiez `VkDeviceCreateInfo` pour qu'il pointe sur le contenu du vector :
 
 ```cpp
 createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
