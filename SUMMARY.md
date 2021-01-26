@@ -16,7 +16,8 @@
   * [Graphic Pipeline](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/graphic-pipeline.md)
   * [Render Pass](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/render-pass.md)
   * [Frame Buffers](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/frame-buffers.md)
-  * [Command Buffers](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/command-buffers.md)
+  * [Command Buffers](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/command-buffers-1.md)
+  * [Rendu et présentation](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/command-buffers.md)
 * [Pour aller plus loin](a-la-decouverte-de-vulkan-1/pour-aller-plus-loin.md)
 * [Références](a-la-decouverte-de-vulkan-1/references.md)
 
