@@ -1,6 +1,6 @@
 # Code de base
 
-### Structure générale <a id="page_Structure-gnrale"></a>
+## Structure générale
 
 Dans le chapitre précédent nous avons créé un projet Vulkan avec une configuration solide et nous l'avons testé. Nous recommençons ici à partir du code suivant :
 
@@ -48,28 +48,28 @@ int main() {
 }
 ```
 
-### Intégrer GLFW <a id="page_Intgrer-GLFW"></a>
+## Intégrer GLFW
 
-Vulkan marche très bien sans fenêtre si vous voulez l'utiliser pour du rendu sans écran \(offscreen rendering en Anglais\), mais c'est tout de même plus intéressant d'afficher quelque chose! Remplacez d'abord la ligne `#include <vulkan/vulkan.h>` par :
+Vulkan marche très bien sans fenêtre si vous voulez l'utiliser pour du rendu sans écran \(offscreen rendering en Anglais\), mais c'est tout de même plus intéressant d'afficher quelque chose. Ajoutez, les lignes suivantes pour intégrer GLFW à votre application C++ :
 
 ```cpp
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 ```
 
- Le premier appel dans `initWindow` doit être `glfwInit()`, ce qui initialise la librairie. Dans la mesure où GLFW a été créée pour fonctionner avec OpenGL, nous devons lui demander de ne pas créer de contexte OpenGL avec l'appel suivant :
+Le premier appel dans `initWindow` doit être `glfwInit()`, ce dernier va initialiser la librairie. Dans la mesure où GLFW a été créée pour fonctionner avec OpenGL, nous devons lui demander de ne pas créer de contexte OpenGL avec l'appel suivant :
 
 ```cpp
 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 ```
 
-Dans la mesure où redimensionner une fenêtre n'est pas chose aisée avec Vulkan, nous verrons cela plus tard et l'interdisons pour l'instant.
+Redimensionner une fenêtre n'est pas aussi simple qu'en OpenGL, nous verrons cela plus tard et l'interdisons pour l'instant.
 
 ```cpp
 glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 ```
 
- Il ne nous reste plus qu'à créer la fenêtre. Ajoutez un membre privé `GLFWWindow* m_window` pour en stocker une référence, et initialisez la ainsi :
+Il ne nous reste plus qu'à créer la fenêtre. Ajoutez un membre privé `GLFWWindow* m_window` pour en stocker une référence, et initialisez la ainsi :
 
 ```cpp
 window = glfwCreateWindow(800, 600, "Vulkan", nullptr, nullptr);
@@ -77,7 +77,7 @@ window = glfwCreateWindow(800, 600, "Vulkan", nullptr, nullptr);
 
 Les trois premiers paramètres indiquent respectivement la largeur, la hauteur et le titre de la fenêtre. Le quatrième vous permet optionnellement de spécifier un moniteur sur lequel ouvrir la fenêtre, et le cinquième est spécifique à OpenGL.
 
-Nous devrions plutôt utiliser des constantes pour la hauteur et la largeur dans la mesure où nous aurons besoin de ces valeurs dans le futur. J'ai donc ajouté ceci au-dessus de la définition de la classe `HelloTriangleApplication` :
+Utlisons plutôt des constantes pour la hauteur et la largeur car nous aurons besoin de ces valeurs dans le futur. J'ai donc ajouté ceci au-dessus de la définition de la classe `HelloTriangleApplication` :
 
 ```cpp
 const uint32_t WIDTH = 800;
@@ -90,20 +90,7 @@ et remplacé la création de la fenêtre par :
 window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
 ```
 
- Vous avez maintenant une fonction `initWindow` ressemblant à ceci :
-
-```cpp
-void initWindow() {
-    glfwInit();
-
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-    window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
-}
-```
-
-Pour s'assurer que l'application tourne jusqu'à ce qu'une erreur ou un clic sur la croix ne l'interrompe, nous devons écrire une petite boucle de gestion d'évènements :
+Pour s'assurer que l'application tourne jusqu'à ce qu'une erreur ou autre ne l'interrompe, nous devons écrire une petite boucle de gestion d'évènements :
 
 ```cpp
 void mainLoop() {
@@ -113,9 +100,9 @@ void mainLoop() {
 }
 ```
 
-Ce code est relativement simple. GLFW récupère tous les évènements disponibles, puis vérifie qu'aucun d'entre eux ne correspond à une demande de fermeture de fenêtre. Ce sera aussi ici que nous appellerons la fonction qui affichera un triangle.
+Ce code est relativement simple et classique de tout programme utilisant GLFW. En effet, GLFW va récupèrer tous les évènements disponibles, puis vérifier qu'aucun d'entre eux ne correspond à une demande de fermeture de fenêtre. Ce sera aussi ici que nous appellerons la fonction qui affichera un triangle.
 
-Une fois la requête pour la fermeture de la fenêtre récupérée, nous devons détruire toutes les ressources allouées et quitter GLFW. Voici notre première version de la fonction `cleanup` :
+Nous devons aussi pensé à  détruire toutes les ressources allouées lors de la fermeture de notre programme et quitter GLFW. Ajoutez les deux méthodes correspondantes de GLFW à la fonction `cleanup` :
 
 ```cpp
 void cleanup() {
@@ -124,8 +111,6 @@ void cleanup() {
     glfwTerminate();
 }
 ```
-
-Si vous lancez l'application, vous devriez voir une fenêtre appelée "Vulkan" qui se ferme en cliquant sur la croix. Maintenant que nous avons une base pour notre application Vulkan, créons notre premier objet Vulkan!!
 
 **Vidéo / Code :**
 
