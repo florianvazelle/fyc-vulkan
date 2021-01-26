@@ -13,7 +13,7 @@ Une seule réponse est correct.
 * c. 1998
 * d. 1992
 
-2\) Que permet Vulkan, que ne permet pas OpenGL ?
+2\) Que permet Vulkan, par défaut, que ne permet pas OpenGL ?
 
 * a. Le support des textures 4K
 * b. Les shaders en GLSL 4.50
