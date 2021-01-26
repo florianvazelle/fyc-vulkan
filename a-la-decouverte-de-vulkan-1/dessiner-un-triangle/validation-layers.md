@@ -21,69 +21,84 @@ Mieux encore, les couches de validation ne recherchent pas seulement les violati
 
 Nous allons maintenant préparer notre instance pour utilisé les couches de validation. 
 
+Mais ajoutons d'abord deux variables spécifiant les layers à activer et si le programme doit en effet les activer. J'ai choisi d'effectuer ce choix selon si le programme est compilé en mode debug ou non. La macro `NDEBUG` fait partie du standard c++ et correspond au second cas.
+
+```cpp
+const uint32_t WIDTH = 800;
+const uint32_t HEIGHT = 600;
+
+const std::vector<const char*> validationLayers = {
+    "VK_LAYER_KHRONOS_validation"
+};
+
+#ifdef NDEBUG
+    constexpr bool enableValidationLayers = false;
+#else
+    constexpr bool enableValidationLayers = true;
+#endif
+```
+
 Ajoutons une nouvelle fonction `CheckValidationLayerSupport`, qui devra vérifier si les couches que nous voulons utiliser sont disponibles. Liste-on d'abord les validation layers disponibles à l'aide de la fonction `vkEnumerateInstanceLayerProperties`. Elle s'utilise de la même façon que`vkEnumerateInstanceExtensionProperties`.
 
 ```cpp
-bool Instance::CheckValidationLayerSupport() {
-  uint32_t layerCount;
-  vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-  
-  std::vector<VkLayerProperties> availableLayers(layerCount);
-  vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-  
-  for (const char* layerName : Instance::ValidationLayers) {
+bool checkValidationLayerSupport() {
+    uint32_t layerCount;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+    std::vector<VkLayerProperties> availableLayers(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+    return false;
+}
+```
+
+Vérifiez que toutes les layers de `validationLayers` sont présentes dans la liste des layers disponibles. Vous aurez besoin de `<cstring>` pour la fonction `strcmp`.
+
+```cpp
+for (const char* layerName : validationLayers) {
     bool layerFound = false;
-    
+
     for (const auto& layerProperties : availableLayers) {
-      if (strcmp(layerName, layerProperties.layerName) == 0) {
-        layerFound = true;
-        break;
-      }
+        if (strcmp(layerName, layerProperties.layerName) == 0) {
+            layerFound = true;
+            break;
+        }
     }
-    
+
     if (!layerFound) {
-      return false;
+        return false;
     }
-  }
-  
-  return true;
+}
+
+return true;
+```
+
+Nous pouvons maintenant utiliser cette fonction lors de la création de notre instance.
+
+```cpp
+void createInstance() {
+    if (enableValidationLayers && !checkValidationLayerSupport()) {
+        throw std::runtime_error("les validations layers sont activées mais ne sont pas disponibles!");
+    }
+
+    ...
 }
 ```
 
- Nous pouvons maintenant utiliser cette fonction lors de la création de notre instance.
+Lancez maintenant le programme en mode debug et assurez-vous qu'il fonctionne. Si vous obtenez une erreur, référez-vous à la FAQ.
+
+Modifions enfin la structure [`VkCreateInstanceInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkCreateInstanceInfo.html) pour inclure les noms des validation layers à utiliser lorsqu'elles sont activées :
 
 ```cpp
-Instance::Instance(const char* appName, const char* engineName, bool validationLayers)
-    : m_instance(VK_NULL_HANDLE), m_enableValidationLayers(validationLayers) {
-  if (validationLayers && !CheckValidationLayerSupport()) {
-    throw std::runtime_error("validation layers requested, but not available!");
-  }
-  ...
-}
-```
-
-```cpp
-VkInstanceCreateInfo createInfo{};
-createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-createInfo.pApplicationInfo = &appInfo;
-
-std::vector<const char*> extensions;
-GetRequiredExtensions(extensions, validationLayers);
-createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-createInfo.ppEnabledExtensionNames = extensions.data();
-
-VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
-if (validationLayers) {
-  createInfo.enabledLayerCount = static_cast<uint32_t>(Instance::ValidationLayers.size());
-  createInfo.ppEnabledLayerNames = Instance::ValidationLayers.data();
-
-  DebugUtilsMessenger::PopulateDebugMessengerCreateInfo(debugCreateInfo);
-  createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+if (enableValidationLayers) {
+    createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+    createInfo.ppEnabledLayerNames = validationLayers.data();
 } else {
-  createInfo.enabledLayerCount = 0;
-  createInfo.pNext = nullptr;
+    createInfo.enabledLayerCount = 0;
 }
 ```
+
+ Si l'appel à la fonction `checkValidationLayerSupport` est un succès, [`vkCreateInstance`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateInstance.html) ne devrait jamais retourner `VK_ERROR_LAYER_NOT_PRESENT`, mais exécutez tout de même le programme pour être sûr que d'autres erreurs n'apparaissent pas.
 
 **Vidéo / Code :**
 

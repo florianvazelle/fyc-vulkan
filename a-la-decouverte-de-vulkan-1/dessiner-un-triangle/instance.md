@@ -17,7 +17,7 @@ private:
 VkInstance instance;
 ```
 
- Pour créer l'instance, nous allons d'abord remplir une première structure avec des informations sur notre application. Ces données sont optionnelles, mais elles peuvent fournir des informations utiles au driver pour optimiser ou diagnostiquer les erreurs lors de l'exécution, par exemple en reconnaissant le nom d'un moteur graphique. Cette structure s'appelle [`VkApplicationInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkApplicationInfo.html) :
+Pour créer l'instance, nous allons d'abord remplir une première structure avec des informations sur notre application. Ces données sont optionnelles, mais elles peuvent fournir des informations utiles au driver pour optimiser ou diagnostiquer les erreurs lors de l'exécution, par exemple en reconnaissant le nom d'un moteur graphique. Cette structure s'appelle [`VkApplicationInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkApplicationInfo.html) :
 
 ```cpp
 void initVulkan() {
