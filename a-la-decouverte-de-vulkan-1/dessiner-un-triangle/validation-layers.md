@@ -104,5 +104,5 @@ if (enableValidationLayers) {
 
 {% file src="../../.gitbook/assets/part-4-validation-layers.cpp" %}
 
-
+{% embed url="https://youtu.be/sy64oIuEr54" %}
 
