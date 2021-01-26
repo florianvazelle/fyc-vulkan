@@ -127,5 +127,5 @@ Si les queues sont les mêmes, les variables contenant les références contienn
 
 {% file src="../../.gitbook/assets/part-7-window-surface.cpp" %}
 
-
+{% embed url="https://youtu.be/jtrRpOznnIk" %}
 
