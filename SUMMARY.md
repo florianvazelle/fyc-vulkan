@@ -23,7 +23,6 @@
 
 ## Exercices
 
-* [Cas Pratique](exercices/cas-pratique.md)
 * [Quizz Intermédiaire](exercices/quizz-intermediaire.md)
 * [Quizz Final](exercices/quizz-final.md)
 
