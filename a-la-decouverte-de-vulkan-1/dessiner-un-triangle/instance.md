@@ -17,7 +17,7 @@ private:
 VkInstance instance;
 ```
 
-Pour créer l'instance, nous allons d'abord remplir une première structure avec des informations sur notre application. Ces données sont optionnelles, mais elles peuvent fournir des informations utiles au driver pour optimiser ou diagnostiquer les erreurs lors de l'exécution, par exemple en reconnaissant le nom d'un moteur graphique. Cette structure s'appelle [`VkApplicationInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkApplicationInfo.html) :
+Pour créer l'instance, nous allons d'abord remplir une première structure avec des informations sur notre application. Ces données sont optionnelles, mais elles peuvent fournir des informations utiles au driver pour optimiser ou diagnostiquer les erreurs lors de l'exécution, par exemple en reconnaissant le nom d'un moteur graphique. Cette structure s'appelle `VkApplicationInfo` :
 
 ```cpp
 void initVulkan() {
@@ -82,7 +82,7 @@ for (const auto& extension : extensions) {
 
 ### Libération des ressources <a id="page_Libration-des-ressources"></a>
 
-L'instance contenue dans [`VkInstance`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkInstance.html) ne doit être détruite qu'à la fin du programme. Nous la détruirons dans la fonction `cleanup` grâce à la fonction [`vkDestroyInstance`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyInstance.html) :
+L'instance contenue dans `VkInstance` ne doit être détruite qu'à la fin du programme. Nous la détruirons dans la fonction `cleanup` grâce à la fonction `vkDestroyInstance` :
 
 ```cpp
 void cleanup() {
