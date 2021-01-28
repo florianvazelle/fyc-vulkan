@@ -2,7 +2,7 @@
 
 ## Structure générale
 
-Dans le chapitre précédent nous avons créé un projet Vulkan avec une configuration solide et nous l'avons testé. Nous recommençons ici à partir du code suivant :
+Suite à la vidéo de création d'un environnement de développement Vulkan, nous pouvons commencer à rentrer dans le vif du sujet, le code. Pour cela, créons une base d'application Vulkan simple  :
 
 ```cpp
 #include <vulkan/vulkan.h>
@@ -48,9 +48,14 @@ int main() {
 }
 ```
 
-## Intégrer GLFW
+Nous définissons ici : 
 
-Vulkan marche très bien sans fenêtre si vous voulez l'utiliser pour du rendu sans écran \(offscreen rendering en Anglais\), mais c'est tout de même plus intéressant d'afficher quelque chose. Ajoutez, les lignes suivantes pour intégrer GLFW à votre application C++ :
+* une classe `HelloTriangleApplication` qui contiendra toute les méthodes dont nous aurons besoin
+* une méthode main qui démarrera notre application
+
+## Intégration de GLFW
+
+Il est possible de faire des applications Vulkan sans fenêtre, mais ce tutoriel à pour but d'afficher un triangle, donc gérons le coté graphique ! Pour ajouter, les lignes suivantes pour intégrer GLFW à votre application C++ :
 
 ```cpp
 #define GLFW_INCLUDE_VULKAN
@@ -77,7 +82,7 @@ window = glfwCreateWindow(800, 600, "Vulkan", nullptr, nullptr);
 
 Les trois premiers paramètres indiquent respectivement la largeur, la hauteur et le titre de la fenêtre. Le quatrième vous permet optionnellement de spécifier un moniteur sur lequel ouvrir la fenêtre, et le cinquième est spécifique à OpenGL.
 
-Utlisons plutôt des constantes pour la hauteur et la largeur car nous aurons besoin de ces valeurs dans le futur. J'ai donc ajouté ceci au-dessus de la définition de la classe `HelloTriangleApplication` :
+Utilisons plutôt des constantes pour la hauteur et la largeur car nous aurons besoin de ces valeurs dans le futur. J'ai donc ajouté ceci au-dessus de la définition de la classe `HelloTriangleApplication` :
 
 ```cpp
 const uint32_t WIDTH = 800;
