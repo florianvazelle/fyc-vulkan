@@ -56,7 +56,7 @@ Les subpasses s'occupent automatiquement de la transition de l'organisation des 
 
 Il existe deux dépendances préexistantes capables de gérer les transitions au début et à la fin de la render pass. Le problème est que cette première dépendance ne s'exécute pas au bon moment. Elle part du principe que la transition de l'organisation de l'image doit être réalisée au début de la pipeline, mais dans notre programme l'image n'est pas encore acquise à ce moment! Il existe deux manières de régler ce problème. Nous pourrions changer `waitStages` pour `imageAvailableSemaphore` à `VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT` pour être sûrs que la pipeline ne commence pas avant que l'image ne soit acquise, mais nous perdrions en performance car les shaders travaillant sur les vertices n'ont pas besoin de l'image. Il faudrait faire quelque chose de plus subtil. Nous allons donc plutôt faire attendre la render pass à l'étape `VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT` et faire la transition à ce moment. Cela nous donne de plus une bonne excuse pour s'intéresser au fonctionnement des subpass dependencies.
 
-Celles-ci sont décrites dans une structure de type [`VkSubpassDependency`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkSubpassDependency.html). Créez en une dans la fonction `createRenderPass` :
+Celles-ci sont décrites dans une structure de type `VkSubpassDependency`. Créez en une dans la fonction `createRenderPass` :
 
 ```text
 VkSubpassDependency dependency{};
