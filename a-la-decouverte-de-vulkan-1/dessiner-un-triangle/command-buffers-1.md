@@ -1,6 +1,6 @@
 # Command Buffers
 
-### Command pools <a id="page_Command-pools"></a>
+### Command Pool <a id="page_Command-pools"></a>
 
 Nous devons créer une _command pool_ avant de pouvoir créer les command buffers. Les command pools gèrent la mémoire utilisée par les buffers, et c'est de fait les command pools qui nous instancient les command buffers. Ajoutez un nouveau membre donnée à la classe de type [`VkCommandPool`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkCommandPool.html) :
 
@@ -8,7 +8,7 @@ Nous devons créer une _command pool_ avant de pouvoir créer les command buffer
 VkCommandPool commandPool;
 ```
 
- Créez ensuite la fonction `createCommandPool` et appelez-la depuis `initVulkan` après la création du framebuffer.
+Créez ensuite la fonction `createCommandPool` et appelez-la depuis `initVulkan` après la création du framebuffer.
 
 ```cpp
 void initVulkan() {
@@ -61,7 +61,7 @@ void cleanup() {
 }
 ```
 
-### Allocation des command buffers <a id="page_Allocation-des-command-buffers"></a>
+### Allocation des Command Buffers <a id="page_Allocation-des-command-buffers"></a>
 
 Nous pouvons maintenant allouer des command buffers et enregistrer les commandes d'affichage. Dans la mesure où l'une des commandes consiste à lier un framebuffer nous devrons les enregistrer pour chacune des images de la swap chain. Créez pour cela une liste de [`VkCommandBuffer`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkCommandBuffer.html) et stockez-la dans un membre donnée de la classe. Les command buffers sont libérés avec la destruction de leur command pool, nous n'avons donc pas à faire ce travail.
 
@@ -108,7 +108,7 @@ if (vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) != VK_SU
 }
 ```
 
-### Début de l'enregistrement des commandes <a id="page_Dbut-de-l-enregistrement-des-commandes"></a>
+### Enregistrement des Commandes <a id="page_Dbut-de-l-enregistrement-des-commandes"></a>
 
 Nous commençons l'enregistrement des commandes en appelant [`vkBeginCommandBuffer`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkBeginCommandBuffer.html). Cette fonction prend une petite structure du type [`VkCommandBufferBeginInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkCommandBufferBeginInfo.html) en argument, permettant d'indiquer quelques détails sur l'utilisation du command buffer.
 
