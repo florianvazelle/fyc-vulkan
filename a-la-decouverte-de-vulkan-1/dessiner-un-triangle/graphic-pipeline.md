@@ -132,7 +132,7 @@ void createGraphicsPipeline() {
 
 ### Créer des modules shader <a id="page_Crer-des-modules-shader"></a>
 
-Avant de passer ce code à la pipeline nous devons en faire un [`VkShaderModule`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkShaderModule.html). Créez pour cela une fonction `createShaderModule`.
+Avant de passer ce code à la pipeline nous devons en faire un `VkShaderModule`. Créez pour cela une fonction `createShaderModule`.
 
 ```cpp
 VkShaderModule createShaderModule(const std::vector<char>& code) {
@@ -173,7 +173,7 @@ void createGraphicsPipeline() {
 
 ### Création des étapes shader <a id="page_Cration-des-tapes-shader"></a>
 
-Nous devons assigner une étape shader aux modules que nous avons crées. Nous allons utiliser une structure du type [`VkPipelineShaderStageCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkPipelineShaderStageCreateInfo.html) pour cela.
+Nous devons assigner une étape shader aux modules que nous avons crées. Nous allons utiliser une structure du type `VkPipelineShaderStageCreateInfo` pour cela.
 
 Nous allons d'abord remplir cette structure pour le vertex shader, une fois de plus dans la fonction `createGraphicsPipeline`.
 

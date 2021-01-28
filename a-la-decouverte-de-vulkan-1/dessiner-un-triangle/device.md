@@ -4,7 +4,7 @@
 
 ### Sélection d'un physical device <a id="page_Slection-d-un-physical-device"></a>
 
-La librairie étant initialisée à travers [`VkInstance`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkInstance.html), nous pouvons dès à présent chercher et sélectionner une carte graphique \(physical device\) dans le système qui supporte les fonctionnalitées dont nous aurons besoin. Nous pouvons en fait en sélectionner autant que nous voulons et travailler avec chacune d'entre elles, mais nous n'en utiliserons qu'une dans ce tutoriel pour des raisons de simplicité.
+La librairie étant initialisée à travers `VkInstance`, nous pouvons dès à présent chercher et sélectionner une carte graphique \(physical device\) dans le système qui supporte les fonctionnalitées dont nous aurons besoin. Nous pouvons en fait en sélectionner autant que nous voulons et travailler avec chacune d'entre elles, mais nous n'en utiliserons qu'une dans ce tutoriel pour des raisons de simplicité.
 
 Ajoutez la fonction `pickPhysicalDevice` et appelez la depuis `initVulkan` :
 
@@ -20,7 +20,7 @@ void pickPhysicalDevice() {
 }
 ```
 
-Nous stockerons le physical device que nous aurons sélectionnée dans un nouveau membre donnée de la classe, et celui-ci sera du type [`VkPhysicalDevice`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkPhysicalDevice.html). Cette référence sera implicitement détruit avec l'instance, nous n'avons donc rien à ajouter à la fonction `cleanup`.
+Nous stockerons le physical device que nous aurons sélectionnée dans un nouveau membre donnée de la classe, et celui-ci sera du type `VkPhysicalDevice`. Cette référence sera implicitement détruit avec l'instance, nous n'avons donc rien à ajouter à la fonction `cleanup`.
 
 ```cpp
 VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -73,7 +73,7 @@ if (physicalDevice == VK_NULL_HANDLE) {
 
 ### Vérification des fonctionnalités de base <a id="page_Vrification-des-fonctionnalits-de-base"></a>
 
-Pour évaluer la compatibilité d'un physical device nous devons d'abord nous informer sur ses capacités. Des propriétés basiques comme le nom, le type et les versions de Vulkan supportées peuvent être obtenues en appelant [`vkGetPhysicalDeviceProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceProperties.html).
+Pour évaluer la compatibilité d'un physical device nous devons d'abord nous informer sur ses capacités. Des propriétés basiques comme le nom, le type et les versions de Vulkan supportées peuvent être obtenues en appelant `vkGetPhysicalDeviceProperties`.
 
 ```cpp
 VkPhysicalDeviceProperties deviceProperties;
@@ -165,7 +165,7 @@ QueueFamilyIndices findQueueFamily(VkPhysicalDevice) {
 }
 ```
 
-Récupérer la liste des queue families disponibles se fait de la même manière que d'habitude, avec la fonction [`vkGetPhysicalDeviceQueueFamilyProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceQueueFamilyProperties.html) :
+Récupérer la liste des queue families disponibles se fait de la même manière que d'habitude, avec la fonction `vkGetPhysicalDeviceQueueFamilyProperties` :
 
 ```cpp
 uint32_t queueFamilyCount = 0;
@@ -175,7 +175,7 @@ std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 ```
 
- La structure [`VkQueueFamilyProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkQueueFamilyProperties.html) contient des informations sur la queue family, et en particulier le type d'opérations qu'elle supporte et le nombre de queues que l'on peut instancier à partir de cette famille. Nous devons trouver au moins une queue supportant `VK_QUEUE_GRAPHICS_BIT` :
+ La structure `VkQueueFamilyProperties` contient des informations sur la queue family, et en particulier le type d'opérations qu'elle supporte et le nombre de queues que l'on peut instancier à partir de cette famille. Nous devons trouver au moins une queue supportant `VK_QUEUE_GRAPHICS_BIT` :
 
 ```cpp
 int i = 0;
