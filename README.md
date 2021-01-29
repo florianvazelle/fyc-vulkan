@@ -1,5 +1,5 @@
 ---
-description: Présentation de notre sujet test
+description: Présentation de notre sujet
 ---
 
 # Introduction
