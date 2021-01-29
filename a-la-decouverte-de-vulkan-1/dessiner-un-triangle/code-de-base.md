@@ -2,16 +2,13 @@
 
 ## Structure générale
 
-Suite à la vidéo de création d'un environnement de développement Vulkan, nous pouvons commencer à rentrer dans le vif du sujet, le code. Pour cela, créons une base d'application Vulkan simple  :
+Suite à la vidéo de création d'un environnement de développement Vulkan, nous pouvons commencer à rentrer dans le vif du sujet, le code. 
+
+### HelloTriangleApplication
+
+Pour cela, créons une base d'application Vulkan simple, en commençant par une classe `HelloTriangleApplication` qui contiendra toute les méthodes dont nous aurons besoin  :
 
 ```cpp
-#include <vulkan/vulkan.h>
-
-#include <iostream>
-#include <stdexcept>
-#include <functional>
-#include <cstdlib>
-
 class HelloTriangleApplication {
 public:
     void run() {
@@ -33,7 +30,13 @@ private:
 
     }
 };
+```
 
+### Main
+
+Ensuite, notre méthode main qui démarrera notre application :
+
+```cpp
 int main() {
     HelloTriangleApplication app;
 
@@ -48,10 +51,7 @@ int main() {
 }
 ```
 
-Nous définissons ici : 
-
-* une classe `HelloTriangleApplication` qui contiendra toute les méthodes dont nous aurons besoin
-* une méthode main qui démarrera notre application
+Nous reviendrons la-dessus, mais nous créerons beaucoup d'exception dans notre application et c'est pourquoi ajouter un `try / catch` , est plus confortable pour déboger et ainsi voir toutes les erreurs que peut générer notre application.
 
 ## Intégration de GLFW
 
@@ -64,9 +64,13 @@ Il est possible de faire des applications Vulkan sans fenêtre, mais ce tutoriel
 
 ### Initialisation
 
-Commencons maintenant à rentrer un peu dans la théorie du fonctionnement de Vulkan. Une des spécificité de Vulkan, comparé à OpenGL, est que l'on a besoin de lui spécifier des extensions qui sont tout simplement des fonctionnalités supplémentaires.
+Commençons maintenant à rentrer un peu dans la théorie du fonctionnement de Vulkan. Une des spécificité de Vulkan, comparé à OpenGL, est que l'on a besoin de lui spécifier des extensions qui sont tout simplement des fonctionnalités supplémentaires.
 
-Nous allons voir cela plus précisément dans le chapitre suivant, consacré aux instances, mais c'est extensions ont besoin dêtre déclaré avant la création de l'instance. Et l'extension dont nous avons beoin ici, est celle de GLFW. Pour cela il est important d'appeler `glfwInit()` avant la création de l'instance. Sinon nous ne pourrons tout simplement pas utiliser GLFW avec Vulkan.
+Nous allons voir cela plus précisément dans le chapitre suivant, consacré aux instances, mais c'est extensions ont besoin d’être déclaré avant la création de l'instance. Et l'extension dont nous avons besoin ici, est celle de GLFW. 
+
+{% hint style="warning" %}
+Il est important d'appeler `glfwInit()` avant la création de l'instance. Sinon nous ne pourrons tout simplement pas utiliser GLFW avec Vulkan.
+{% endhint %}
 
 ```cpp
 glfwInit();
