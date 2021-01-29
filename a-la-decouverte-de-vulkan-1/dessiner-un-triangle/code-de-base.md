@@ -18,17 +18,11 @@ public:
     }
 
 private:
-    void initVulkan() {
+    void initVulkan() {}
 
-    }
+    void mainLoop() {}
 
-    void mainLoop() {
-
-    }
-
-    void cleanup() {
-
-    }
+    void cleanup() {}
 };
 ```
 
