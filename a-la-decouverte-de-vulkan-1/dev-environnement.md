@@ -13,6 +13,8 @@ description: >-
 
 Tout d'abord, le langage que nous allons utiliser pour ce tutoriel est le C++. Il est possible de développer des applications Vulkan dans d’autre langage, si il existe le bindings pour. Cependant, il est généralement déconseillé d’utiliser d’autre langage de programmation. En effet, l’API Vulkan est développé en C et cela fera donc plus d'appels de fonction étrangère dans le C-land. Pour les langages qui sont interprétées \(à l'exception de Rust, par exemple\), la surcharge des appels de fonctions supplémentaires s'additionnera et compensera potentiellement les gains de performances que vous avez peut-être réalisés avec Vulkan en premier lieu.
 
+Enfin, il est important de préciser qu'il existe une API Vulkan en C++, que l'on peut retrouver dans le répertoire [Vulkan-Hpp](https://github.com/KhronosGroup/Vulkan-Hpp). Cette API à pour objectif d'ajouter des fonctionnalités telles que la sécurité de type pour les énumérations et les champs de bits, la prise en charge des conteneurs STL. Cependant, nous allons utiliser l'API de Vulkan en C \(en incluant `vulkan/vulkan.h` et non `vulkan/vulkan.hpp`\). Ce ci est un choix qui nous a semblé logique, toujours pour conservé l'optimisation que nous procure Vulkan, donc sans appelle superflux de fonction.
+
 ### GLSL
 
 GLSL pour OpenGL Shading Language, est un langage destiné à l'écriture des shaders qui n'est pas inconnu pour les développeurs OpenGL. De aprt sa simplicité, nous avons choisi de l'utilisé pour l'écriture des shaders de ce tutoriel.
