@@ -1,3 +1,9 @@
+---
+description: >-
+  Commençons par découvrir la structure général de notre application et
+  intégrons GLFW.
+---
+
 # Premier pas
 
 ## Structure générale
