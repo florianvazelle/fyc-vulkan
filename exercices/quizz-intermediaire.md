@@ -3,7 +3,7 @@
 {% tabs %}
 {% tab title="Questions" %}
 {% hint style="info" %}
-Une seule réponse est correct.
+Une seule réponse est correct
 {% endhint %}
 
 1\) Quelle est l'année de sortie d'OpenGL ?

@@ -1,3 +1,7 @@
+---
+description: La SwapChain est une file d'attente d'image prête à être affiché.
+---
+
 # Swap Chain
 
 **Vidéo / Code :**

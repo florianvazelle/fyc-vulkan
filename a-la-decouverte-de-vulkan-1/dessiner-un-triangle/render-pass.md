@@ -1,3 +1,10 @@
+---
+description: >-
+  La RenderPass va permettre d'indiquer combien chaque FrameBuffer aura de
+  buffer de couleur, de profondeur, combien de sample... et comment les
+  utiliser.
+---
+
 # Render Pass
 
 Un render pass \(passe de rendu en francais\) est une description générale des étapes de nos commandes de dessin, que nous verrons par la suite, ces étapes sont divisées en ressources utilisées pendant le rendu. Nous ne pouvons rien rendre dans Vulkan sans une passe de rendu. Et chaque passe de rendu doit comporter une ou plusieurs étapes. Ces étapes sont appelées, sous-passe.

@@ -1,3 +1,9 @@
+---
+description: >-
+  Le device physique est la carte graphique de notre ordinateur, alors que le
+  device logique est l'interface entre l'application et notre composant.
+---
+
 # Device
 
 ## Physical

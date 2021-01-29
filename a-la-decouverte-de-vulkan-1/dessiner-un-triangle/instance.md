@@ -1,3 +1,7 @@
+---
+description: L'instance permet de stocker l'état global de notre application.
+---
+
 # Instance
 
 Tout d'abord, nous devons créer une instance de Vulkan. Un `VkInstance` est un objet qui contient toutes les informations dont l'application Vulkan a besoin pour fonctionner. Contrairement à OpenGL, Vulkan n'a pas d'état global. Pour cette raison, nous devons à la place stocker nos états dans cet objet. Dans ce chapitre, nous allons commencer un cours que nous utiliserons pour le reste du livre.
