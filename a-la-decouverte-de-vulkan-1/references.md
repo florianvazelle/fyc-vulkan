@@ -9,6 +9,10 @@
 
 ## Livres
 
+![](../.gitbook/assets/image.png)
+
+## Livres
+
 * _Vulkan Cookbook_ par **Pawel Lapinski**
 * _GPU Zen 2: Advanced Rendering Techniques_ par **Wolfgang Engel**
 
