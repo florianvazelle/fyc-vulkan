@@ -1,5 +1,5 @@
 ---
-description: La SwapChain est une file d'attente d'image prête à être affiché.
+description: La Swap Chain est une file d'attente d'images prêtes à être affichées.
 ---
 
 # Swap Chain
@@ -30,7 +30,7 @@ A noter également que toute les cartes graphiques ne sont pas faite pour affich
 
 **Quizz :**
 
-Vous êtes arrivées a la moitié du tutoriel, vous pouvez maintenant tester vos connaissance grâce au test intermédiaire.
+Vous êtes arrivés à la moitié du tutoriel, vous pouvez maintenant tester vos connaissance grâce au test intermédiaire.
 
 {% page-ref page="../../exercices/quizz-intermediaire.md" %}
 

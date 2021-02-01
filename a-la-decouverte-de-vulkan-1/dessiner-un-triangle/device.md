@@ -1,16 +1,17 @@
 ---
 description: >-
-  Le device physique est la carte graphique de notre ordinateur, alors que le
-  device logique est l'interface entre l'application et notre composant.
+  Le physical device/périphérique physique est la carte graphique de notre
+  ordinateur, alors que le logical device/périphérique logique est l'interface
+  entre l'application et notre composant.
 ---
 
-# Device
+# Devices
 
 ## Physical
 
 ### Sélection d'un physical device <a id="page_Slection-d-un-physical-device"></a>
 
-La librairie étant initialisée à travers `VkInstance`, nous pouvons dès à présent chercher et sélectionner une carte graphique \(physical device\) dans le système qui supporte les fonctionnalitées dont nous aurons besoin. Nous pouvons en fait en sélectionner autant que nous voulons et travailler avec chacune d'entre elles, mais nous n'en utiliserons qu'une dans ce tutoriel pour des raisons de simplicité.
+La librairie étant initialisée au travers de`VkInstance`, nous pouvons, dès à présent, chercher et sélectionner une carte graphique \(physical device\) dans le système qui supporte les fonctionnalités dont nous aurons besoin. Nous pouvons en fait en sélectionner autant que nous voulons et travailler avec chacune d'entre elles, mais nous n'en utiliserons qu'une dans ce tutoriel pour plus de simplicité.
 
 Ajoutez la fonction `pickPhysicalDevice` et appelez la depuis `initVulkan` :
 
@@ -26,7 +27,7 @@ void pickPhysicalDevice() {
 }
 ```
 
-Nous stockerons le physical device que nous aurons sélectionnée dans un nouveau membre donnée de la classe, et celui-ci sera du type `VkPhysicalDevice`. Cette référence sera implicitement détruit avec l'instance, nous n'avons donc rien à ajouter à la fonction `cleanup`.
+Nous stockerons le physical device que nous aurons sélectionné dans un nouveau membre donnée de la classe, et celui-ci sera du type `VkPhysicalDevice`. Cette référence sera implicitement détruit avec l'instance, nous n'avons donc rien à ajouter à la fonction `cleanup`.
 
 ```cpp
 VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -54,7 +55,7 @@ std::vector<VkPhysicalDevice> devices(deviceCount);
 vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 ```
 
-Nous devons maintenant évaluer chacun des gpus et vérifier qu'ils conviennent pour ce que nous voudrons en faire, car toutes les cartes graphiques n'ont pas été crées égales. Voici une nouvelle fonction qui fera le travail de sélection :
+Nous devons maintenant évaluer chacun des GPUs et vérifier qu'ils conviennent pour ce que nous voudrons en faire, car toutes les cartes graphiques n'ont pas été créées égales. Voici une nouvelle fonction qui fera le travail de sélection :
 
 ```cpp
 bool isDeviceSuitable(VkPhysicalDevice device) {
@@ -79,7 +80,7 @@ if (physicalDevice == VK_NULL_HANDLE) {
 
 ### Vérification des fonctionnalités de base <a id="page_Vrification-des-fonctionnalits-de-base"></a>
 
-Pour évaluer la compatibilité d'un physical device nous devons d'abord nous informer sur ses capacités. Des propriétés basiques comme le nom, le type et les versions de Vulkan supportées peuvent être obtenues en appelant `vkGetPhysicalDeviceProperties`.
+Pour évaluer la compatibilité d'un physical device nous devons d'abord nous informer sur ses capacités. Des propriétés basiques comme le nom, le type et les versions supportées de Vulkan  peuvent être obtenues en appelant `vkGetPhysicalDeviceProperties`.
 
 ```cpp
 VkPhysicalDeviceProperties deviceProperties;
@@ -101,7 +102,7 @@ bool isDeviceSuitable(VkPhysicalDevice device) {
 
 Nous devons analyser quelles queue families existent sur le système et lesquelles correspondent aux commandes que nous souhaitons utiliser. Nous allons donc créer la fonction `findQueueFamilies` dans laquelle nous chercherons les commandes nous intéressant.
 
-Nous allons chercher une queue qui supporte les commandes graphiques, la fonction pourrait ressembler à ça:
+Nous allons chercher une queue qui supporte les commandes graphiques, la fonction pourrait ressembler à ça :
 
 ```cpp
 uint32_t findQueueFamilies(VkPhysicalDevice device) {
@@ -109,7 +110,7 @@ uint32_t findQueueFamilies(VkPhysicalDevice device) {
 }
 ```
 
-Mais dans un des prochains chapitres, nous allons avoir besoin d'une autre famille de queues, il est donc plus intéressant de s'y préparer dès maintenant en empactant plusieurs indices dans une structure:
+Mais dans un des prochains chapitres, nous allons avoir besoin d'une autre famille de queues, il est donc plus intéressant de s'y préparer dès maintenant en regroupant plusieurs indices dans une structure :
 
 ```cpp
 struct QueueFamilyIndices {
@@ -123,7 +124,7 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
 }
 ```
 
-Ce n'est pas très pratique d'utiliser une valeur magique pour indiquer la non-existence d'une famille, comme n'importe quelle valeur de `uint32_t` peut théoriquement être une valeur valide d'index de famille, incluant `0`. Heureusement, le C++17 introduit un type qui permet la distinction entre le cas où la valeur existe et celui où elle n'existe pas:
+Ce n'est pas très pratique d'utiliser une valeur magique pour indiquer la non-existence d'une famille, comme n'importe quelle valeur de `uint32_t` peut théoriquement être une valeur valide d'index de famille, incluant `0`. Heureusement, le C++17 introduit un type qui permet la distinction entre le cas où la valeur existe et celui où elle n'existe pas :
 
 ```cpp
 #include <optional>
@@ -139,7 +140,9 @@ graphicsFamily = 0;
 std::cout << std::boolalpha << graphicsFamily.has_value() << std::endl; // vrai
 ```
 
-`std::optional` est un wrapper qui ne contient aucune valeur tant que vous ne lui en assignez pas une. Vous pouvez, quelque soit le moment, lui demander si il contient une valeur ou non en appelant sa fonction membre `has_value()`. On peut donc changer le code comme suit:
+`std::optional` est un wrapper qui ne contient aucune valeur tant que vous ne lui en assignez pas une. Vous pouvez, quelque soit le moment, lui demander s'il contient une valeur ou non en appelant sa fonction membre `has_value()`. On peut donc changer le code comme suit :
+
+> Rappeler ce qu'est un wrapper
 
 ```cpp
 #include <optional>
@@ -171,7 +174,7 @@ QueueFamilyIndices findQueueFamily(VkPhysicalDevice) {
 }
 ```
 
-Récupérer la liste des queue families disponibles se fait de la même manière que d'habitude, avec la fonction `vkGetPhysicalDeviceQueueFamilyProperties` :
+Récupérer la liste des queue families disponibles se fait de la même manière que d'habitude avec la fonction `vkGetPhysicalDeviceQueueFamilyProperties` :
 
 ```cpp
 uint32_t queueFamilyCount = 0;
@@ -181,7 +184,7 @@ std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 ```
 
- La structure `VkQueueFamilyProperties` contient des informations sur la queue family, et en particulier le type d'opérations qu'elle supporte et le nombre de queues que l'on peut instancier à partir de cette famille. Nous devons trouver au moins une queue supportant `VK_QUEUE_GRAPHICS_BIT` :
+ La structure `VkQueueFamilyProperties` contient des informations sur la queue family et en particulier le type d'opération qu'elle supporte et le nombre de queues que l'on peut instancier à partir de cette famille. Nous devons trouver au moins une queue supportant `VK_QUEUE_GRAPHICS_BIT` :
 
 ```cpp
 int i = 0;
@@ -204,7 +207,7 @@ bool isDeviceSuitable(VkPhysicalDevice device) {
 }
 ```
 
-Pour que ce soit plus pratique, nous allons aussi ajouter une fonction générique à la structure:
+Pour que ce soit plus pratique, nous allons aussi ajouter une fonction générique à la structure :
 
 ```cpp
 struct QueueFamilyIndices {
@@ -238,7 +241,7 @@ for (const auto& queueFamily : queueFamilies) {
 }
 ```
 
-Bien, c'est tout ce dont nous aurons besoin pour choisir le bon physical device! La prochaine étape est de créer un logical device pour créer une interface avec la carte.
+C'est tout ce dont nous aurons besoin pour choisir le bon physical device ! La prochaine étape est de créer un logical device pour créer une interface avec la carte.
 
 **Vidéo / Code :**
 
@@ -289,7 +292,7 @@ queueCreateInfo.pQueuePriorities = &queuePriority;
 
 ### Spécifier les fonctionnalités utilisées <a id="page_Spcifier-les-fonctionnalits-utilises"></a>
 
- Les prochaines informations à fournir sont les fonctionnalités du physical device que nous souhaitons utiliser. Ce sont celles dont nous avons vérifié la présence avec [`vkGetPhysicalDeviceFeatures`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceFeatures.html) dans le chapitre précédent. Nous n'avons besoin de rien de spécial pour l'instant, nous pouvons donc nous contenter de créer la structure et de tout laisser à `VK_FALSE`, valeur par défaut. Nous reviendrons sur cette structure quand nous ferons des choses plus intéressantes avec Vulkan.
+ Les prochaines informations à fournir sont les fonctionnalités du physical device que nous souhaitons utiliser. Ce sont celles dont nous avons vérifié la présence avec [`vkGetPhysicalDeviceFeatures`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceFeatures.html) dans le chapitre précédent. Nous pouvons nous contenter de créer la structure et de tout laisser à `VK_FALSE`, valeur par défaut. Nous reviendrons sur cette structure quand nous ferons des choses plus élaborées avec Vulkan.
 
 ```cpp
 VkPhysicalDeviceFeatures deviceFeatures{};
@@ -343,7 +346,7 @@ VkQueue graphicsQueue;
 vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 ```
 
-Avec le logical device et les queues nous allons maintenant pouvoir faire travailler la carte graphique! Dans le prochain chapitre nous mettrons en place les ressources nécessaires à la présentation des images à l'écran.
+Avec le logical device et les queues nous allons maintenant pouvoir faire travailler la carte graphique ! Dans le prochain chapitre nous mettrons en place les ressources nécessaires à la présentation des images à l'écran.
 
 **Vidéo / Code :**
 

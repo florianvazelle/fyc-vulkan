@@ -4,17 +4,17 @@ Vulkan ignore la plateforme sur laquelle il opère et ne peut donc pas directeme
 
 L'extension `VK_KHR_surface`, qui se charge au niveau de l'instance, a déjà été ajoutée, car elle fait partie des extensions retournées par la fonction `glfwGetRequiredInstanceExtensions`.
 
-La surface de fenêtre doit être créée juste après l'instance car elle peut influencer le choix du physical device. Il est important de noter que cette surface est complètement optionnelle, et vous pouvez l'ignorer si vous voulez effectuer du rendu off-screen ou du calcule, pour utiliser des compute shader par exemple.
+La surface de fenêtre doit être créée juste après l'instance car elle peut influencer le choix du physical device. Il est important de noter que cette surface est complètement optionnelle, et vous pouvez l'ignorer si vous voulez effectuer du rendu off-screen ou du calcul, pour utiliser des compute shaders, par exemple.
 
 ## Création
 
-Commencons par ajouter un nouveau membre à notre classe :
+Commençons par ajouter un nouveau membre à notre classe :
 
 ```cpp
 VkSurfaceKHR surface;
 ```
 
-La fonction `glfwCreateWindowSurface` va nous simplifier la vie, et implémente déjà la création de la surface correspondante à la bonne plateforme. Nous devons maintenant l'intégrer à notre programme. Ajoutez la fonction `createSurface` et appelez-la dans `initVulkan` après la création de l'instance et du DebugMessenger :
+La fonction `glfwCreateWindowSurface` va nous simplifier la vie et implémente déjà la création de la surface correspondante à la bonne plateforme. Nous devons maintenant l'intégrer à notre programme. Ajoutez la fonction `createSurface` et appelez-la dans `initVulkan` après la création de l'instance et du DebugMessenger :
 
 ```cpp
 void initVulkan() {
@@ -47,9 +47,9 @@ void cleanup() {
 
 ### Demander le support pour la présentation
 
-Bien que l'implémentation de Vulkan supporte le WSI, il est possible que d'autres éléments du système ne le supportent pas. Nous devons nous s'assure que le logical device puisse présenter les rendus à la surface que nous avons créée. La présentation est spécifique aux queues families, ce qui signifie que nous devons en fait trouver une queue family supportant cette présentation.
+Bien que l'implémentation de Vulkan supporte le WSI, il est possible que d'autres éléments du système ne le supportent pas. Nous devons nous assurer que le logical device puisse présenter les rendus à la surface que nous avons créée. La présentation est spécifique aux queues families, ce qui signifie que nous devons trouver une queue family supportant cette présentation.
 
-Il est possible que les queues families supportant les commandes d'affichage et celles supportant les commandes de présentation ne soient pas les mêmes, nous devons donc considérer que ces deux queues sont différentes. En fait, les spécificités des queues families diffèrent majoritairement entre les vendeurs, et assez peu entre les modèles d'une même série. Nous devons donc étendre la structure `QueueFamilyIndices` :
+Il est possible que les queues families supportant les commandes d'affichage et celles supportant les commandes de présentation ne soient pas les mêmes, nous devons donc considérer que ces deux queues sont différentes. En fait, les spécificités des queue families diffèrent majoritairement entre les vendeurs, et assez peu entre les modèles d'une même série. Nous devons donc étendre la structure `QueueFamilyIndices` :
 
 ```cpp
 struct QueueFamilyIndices {
@@ -121,7 +121,7 @@ Si les queues sont les mêmes, nous n'avons besoin de les indiquer qu'une seule 
 vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 ```
 
-Si les queues sont les mêmes, les variables contenant les références contiennent la même valeur. Dans le prochain chapitre nous nous intéresserons aux swap chain, et verrons comment elle permet de présenter les rendus à l'écran.
+Si les queues sont les mêmes, les variables contenant les références contiennent la même valeur. Dans le prochain chapitre nous nous intéresserons à la swap chain, et verrons comment elle permet de présenter les rendus à l'écran.
 
 **Vidéo / Code :**
 
