@@ -9,8 +9,6 @@
 
 ## Livres
 
-![](../.gitbook/assets/image.png)
-
 ## Livres
 
 * _Vulkan Cookbook_ par **Pawel Lapinski**
