@@ -64,6 +64,19 @@ Un bon reflexe à avoir est de garder dans une variable le nombre d'images conte
 
 Grâce à la SwapChain, nous avons à chaque instant une liste d'images prête à être affiché à l'écran ou sur lesquelles on peut travailler.
 
+A la fin du programme, il est important de libérer la mémoire occupée par la SwapChain. On peut libérer cette mémoire avec la fonction `vkDestroySwapchainKHR()`.
+
+```cpp
+void vkDestroySwapchainKHR(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    const VkAllocationCallbacks*                pAllocator);
+```
+
+
+
+
+
 **Vidéo / Code :**
 
 {% file src="../../.gitbook/assets/part-8-swap-chain.cpp" %}
