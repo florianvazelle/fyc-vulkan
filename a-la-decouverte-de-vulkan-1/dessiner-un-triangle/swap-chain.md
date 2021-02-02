@@ -68,6 +68,8 @@ Grâce à la SwapChain, nous avons à chaque instant une liste d'images prête �
 
 {% file src="../../.gitbook/assets/part-8-swap-chain.cpp" %}
 
+{% embed url="https://youtu.be/3p-frgC12iQ" %}
+
 **Quizz :**
 
 Vous êtes arrivés à la moitié du tutoriel, vous pouvez maintenant tester vos connaissance grâce au test intermédiaire.

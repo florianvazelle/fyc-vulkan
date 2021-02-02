@@ -254,3 +254,5 @@ if (vkCreateGraphicsPipelines(m_device.logical(), VK_NULL_HANDLE, 1, &info, null
 
 {% file src="../../.gitbook/assets/shader.frag" %}
 
+{% embed url="https://youtu.be/sMruz9-IjbE" %}
+

@@ -126,3 +126,7 @@ Pour proprement détruire une render pass il suffit d'appeler la méthode :
 vkDestroyRenderPass(device, renderPass, nullptr);
 ```
 
+**Vidéo / Code :**
+
+\*\*\*\*
+
