@@ -83,6 +83,8 @@ void initVulkan() {
 
 ### Pipeline Layout
 
+Un Pipeline Layout contient les informations sur les entrées de shader \(DescritpeurSet\). C'est ici aussi que nous pouvons configurer des Push Constantes. Mais pour le moment, nous n'en avons pas besoin.
+
 ```cpp
 VkPipelineLayout pipelineLayout;
 
