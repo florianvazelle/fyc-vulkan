@@ -1,6 +1,6 @@
 # Graphic Pipeline
 
-Le Graphic Pipeline, au sens général, définit toute la tuyauterie, toute les opérations qu'éxecute notre GPU pour nous sortir un rendu. Pour résumé, cette tuyauterie :
+Le Graphic Pipeline, au sens général, définit toute la tuyauterie, toute les opérations qu’exécute notre GPU pour nous sortir un rendu. Pour résumé, cette tuyauterie :
 
 * on lui passe en entré des Vertex/Index Buffers
 * on obtient en sortie des pixels rendus sur un Framebuffer
