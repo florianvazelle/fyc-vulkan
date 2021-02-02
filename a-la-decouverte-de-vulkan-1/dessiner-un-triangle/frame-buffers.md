@@ -6,7 +6,7 @@ Les attachements de différents types spécifiés durant la render pass sont li�
 
 Pour cela créez un autre `std::vector` qui contiendra des framebuffers :
 
-```text
+```cpp
 std::vector<VkFramebuffer> swapChainFramebuffers;
 ```
 
