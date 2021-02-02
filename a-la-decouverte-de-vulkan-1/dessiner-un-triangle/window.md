@@ -1,5 +1,66 @@
 # Window
 
+Dans ce chapitre, nous allons voir comment afficher des résultats à l'écran et comment manipuler les composants d'affichage disponible.
+
+Vulkan est avant tout conçu pour traiter des images et la plupart des applications issues de cette API auront pour objectif d'afficher des images de rendu.
+
+Pour autant, la présentation d'image à l'écran n'est pas gérée par Vulkan directement \(On peut très bien utiliser l'API pour réaliser des rendus que l'on ne va pas afficher\). Nous allons donc devoir utiliser des extensions de Vulkan qui permettront la présentation d'image.
+
+A noter que la présentation d'image peut être gérer de façon différente suivant les plateformes cibles.
+
+Les objets qui permettent la présentation sont appelés **surface** et sont représenté dans Vulkan par des `VKSurfaceKHR`. On accède à ces objets avec l'extension VK\_KHR\_surface.
+
+### Présentation sur Microsoft Windows
+
+Avant de pouvoir présenter des images, nous devons nous assurer qu'au moins une queueFamily supporte les fonctions de présentation.
+
+Sur Windows on peut appeler:
+
+```cpp
+VkBool32 vkGetPhysicalDeviceWin32PresentationSupportKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t                                    queueFamilyIndex);
+```
+
+Cette fonction nous dit si la queueFamily supporte ou non la présentation.
+
+Si au moins une queueFamily supporte la présentation, on peut créer notre surface:
+
+```cpp
+VkResult vkCreateWin32SurfaceKHR(
+    VkInstance                                  instance,
+    const VkWin32SurfaceCreateInfoKHR*          pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSurfaceKHR*                               pSurface);
+```
+
+On passe un pointeur vers une `VkSurfaceKHR*` et la fonction alloue l'objet pour nous \(On peut d'ailleurs utiliser un allocateur personnalisé\).
+
+```cpp
+typedef struct VkWin32SurfaceCreateInfoKHR {
+    VkStructureType                 sType;
+    const void*                     pNext;
+    VkWin32SurfaceCreateFlagsKHR    flags;
+    HINSTANCE                       hinstance;
+    HWND                            hwnd;
+} VkWin32SurfaceCreateInfoKHR;
+```
+
+On doit également passer en paramètre un pointeur vers un `VkWin32SurfaceCreateInfoKHR*` qui contiendra nos paramètres de de surface.
+
+Par exemple pour une fenêtre **GLFW**:
+
+```cpp
+VkWin32SurfaceCreateInfoKHR createInfo{};
+createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+createInfo.hwnd = glfwGetWin32Window(window);
+createInfo.hinstance = GetModuleHandle(nullptr);
+```
+
+
+
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\* copyright \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+
 Vulkan ignore la plateforme sur laquelle il opère et ne peut donc pas directement établir d'interface avec le gestionnaire de fenêtres. Pour créer une interface permettant de présenter les rendus à l'écran, nous devons utiliser l'extension WSI \(Window System Integration\). Nous verrons dans ce chapitre l'extension `VK_KHR_surface`. Nous pourrons ainsi obtenir l'objet `VkSurfaceKHR`, qui est un type abstrait de surface sur lequel nous pourrons effectuer des rendus. Cette surface sera en lien avec la fenêtre que nous avons créée grâce à GLFW.
 
 L'extension `VK_KHR_surface`, qui se charge au niveau de l'instance, a déjà été ajoutée, car elle fait partie des extensions retournées par la fonction `glfwGetRequiredInstanceExtensions`.
