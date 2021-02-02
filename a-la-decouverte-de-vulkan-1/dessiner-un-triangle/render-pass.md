@@ -128,5 +128,11 @@ vkDestroyRenderPass(device, renderPass, nullptr);
 
 **Vidéo / Code :**
 
-\*\*\*\*
+{% file src="../../.gitbook/assets/part-12-render-pass.cpp" %}
+
+{% embed url="https://youtu.be/lcpTghd0\_KQ" %}
+
+{% file src="../../.gitbook/assets/part-13-conclusion.cpp" %}
+
+{% embed url="https://youtu.be/aa-cEU2EbGA" %}
 

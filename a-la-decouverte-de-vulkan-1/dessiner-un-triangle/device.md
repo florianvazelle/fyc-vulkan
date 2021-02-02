@@ -352,5 +352,5 @@ Avec le logical device et les queues nous allons maintenant pouvoir faire travai
 
 {% file src="../../.gitbook/assets/part-6-logical-device-et-queues \(1\).cpp" %}
 
-{% embed url="https://youtu.be/jtrRpOznnIk" %}
+{% embed url="https://youtu.be/QzLcD3rEJ-w" %}
 

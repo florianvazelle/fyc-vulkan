@@ -256,3 +256,7 @@ if (vkCreateGraphicsPipelines(m_device.logical(), VK_NULL_HANDLE, 1, &info, null
 
 {% embed url="https://youtu.be/sMruz9-IjbE" %}
 
+{% file src="../../.gitbook/assets/part-11-fonctions-fixees \(1\).cpp" %}
+
+{% embed url="https://youtu.be/4GNpdLdxFr4" %}
+

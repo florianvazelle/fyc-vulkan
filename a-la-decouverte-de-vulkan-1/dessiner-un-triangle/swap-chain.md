@@ -70,6 +70,10 @@ Grâce à la SwapChain, nous avons à chaque instant une liste d'images prête �
 
 {% embed url="https://youtu.be/3p-frgC12iQ" %}
 
+{% file src="../../.gitbook/assets/part-9-image-views.cpp" %}
+
+{% embed url="https://youtu.be/WTmmXXfsbBQ" %}
+
 **Quizz :**
 
 Vous êtes arrivés à la moitié du tutoriel, vous pouvez maintenant tester vos connaissance grâce au test intermédiaire.
