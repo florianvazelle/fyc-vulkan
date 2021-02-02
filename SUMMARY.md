@@ -11,7 +11,7 @@
   * [Instance](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/instance.md)
   * [Débogage](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/validation-layers.md)
   * [Devices](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/device.md)
-  * [Window](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/window.md)
+  * [Surfaces et Queues](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/window.md)
   * [Swap Chain](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/swap-chain.md)
   * [Graphic Pipeline](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/graphic-pipeline.md)
   * [Render Pass](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/render-pass.md)

@@ -1,4 +1,4 @@
-# Window
+# Surfaces et Queues
 
 Dans ce chapitre, nous allons voir comment afficher des résultats à l'écran et comment manipuler les composants d'affichage disponible.
 
@@ -55,6 +55,12 @@ VkWin32SurfaceCreateInfoKHR createInfo{};
 createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 createInfo.hwnd = glfwGetWin32Window(window);
 createInfo.hinstance = GetModuleHandle(nullptr);
+```
+
+Lorsque l'on termine le programme il est important de libérer la mémoire allouée par la surface.
+
+```cpp
+vkDestroySurfaceKHR(instance, surface, nullptr);
 ```
 
 

@@ -9,13 +9,12 @@
 
 ## Livres
 
-## Livres
-
 * _Vulkan Cookbook_ par **Pawel Lapinski**
 * _GPU Zen 2: Advanced Rendering Techniques_ par **Wolfgang Engel**
 
 ## Tutoriels
 
+* [Vulkan Guide](https://vkguide.dev) par **Victor Blanco**
 * [Tutoriel API Vulkan](https://vulkan-tutorial.com/) par **Alexander Overvoorde**
 * [API without Secrets](https://software.intel.com/content/www/us/en/develop/articles/api-without-secrets-introduction-to-vulkan-part-1.html) par **Intel**
 

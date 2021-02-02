@@ -1,34 +1,19 @@
 # Graphic Pipeline
 
-## Introduction
+Le Graphic Pipeline, au sens général, définit toute la tuyauterie, toute les opérations qu'éxecute notre GPU pour nous sortir un rendu. Pour résumé, cette tuyauterie :
 
- Créez la fonction `createGraphicsPipeline` et appelez-la depuis `initVulkan` après `createImageViews`. Nous travaillerons sur cette fonction dans les chapitres suivants.
+* on lui passe en entré des Vertex/Index Buffers
+* on obtient en sortie des pixels rendus sur un Framebuffer
 
-```cpp
-void initVulkan() {
-    createInstance();
-    setupDebugMessenger();
-    createSurface();
-    pickPhysicalDevice();
-    createLogicalDevice();
-    createSwapChain();
-    createImageViews();
-    createGraphicsPipeline();
-}
+Le Graphic Pipeline, au sens de Vulkan, est très complexe et nous n'allons donc en voir qu'une version simplifiée.
 
-...
+![](../../.gitbook/assets/bitmap.png)
 
-void createGraphicsPipeline() {
+## Shader
 
-}
-```
+Nous aurons donc deux étapes dite de shader. Créons un dossier `shaders` avec dedans les deux shaders, qui sont très classique, ci-dessous :
 
-### Compilation des shaders <a id="page_Compilation-des-shaders"></a>
-
-Créez un dossier `shaders` à la racine de votre projet, puis enregistrez le vertex shader dans un fichier appelé `shader.vert` et le fragment shader dans un fichier appelé `shader.frag`. Les shaders en GLSL n'ont pas d'extension officielle mais celles-ci correspondent à l'usage communément accepté.
-
-Le contenu de `shader.vert` devrait être:
-
+{% code title="shader.vert" %}
 ```cpp
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
@@ -39,12 +24,14 @@ out gl_PerVertex {
 
 layout(location = 0) out vec3 fragColor;
 
+// On stock en dure les coordonnées du triangle
 vec2 positions[3] = vec2[](
     vec2(0.0, -0.5),
     vec2(0.5, 0.5),
     vec2(-0.5, 0.5)
 );
 
+// Et ces couleurs
 vec3 colors[3] = vec3[](
     vec3(1.0, 0.0, 0.0),
     vec3(0.0, 1.0, 0.0),
@@ -56,9 +43,9 @@ void main() {
     fragColor = colors[gl_VertexIndex];
 }
 ```
+{% endcode %}
 
- Et `shader.frag` devrait contenir :
-
+{% code title="shader.frag" %}
 ```cpp
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
@@ -71,138 +58,193 @@ void main() {
     outColor = vec4(fragColor, 1.0);
 }
 ```
+{% endcode %}
 
-Nous allons maintenant compiler ces shaders en bytecode SPIR-V à l'aide du programme `glslc`.
+### Compilation en SPIR-V
 
-**Windows**
+Nous en avions déjà parler, en Vulkan il faut compiler les shaders en bytecode SPIR-V. Le SPIR-V a un énorme intérêt d'intéropabilité des shaders. Il y a plusieurs outils pour cela, voici quelque exemple :
 
-Créez un fichier `compile.bat` et copiez ceci dedans :
+* pour la compilation GLSL : `glslc`, `glslangValidator`
+* pour la compilation des compute shader OpenCL : `clspv`
 
-```cpp
-C:/VulkanSDK/x.x.x.x/Bin32/glslc.exe shader.vert -o vert.spv
-C:/VulkanSDK/x.x.x.x/Bin32/glslc.exe shader.frag -o frag.spv
-pause
-```
+![The SPIR-V Open Source Ecosystem](../../.gitbook/assets/image.png)
 
-### Charger un shader <a id="page_Charger-un-shader"></a>
+## Pipeline
 
-Maintenant que vous pouvez créer des shaders SPIR-V il est grand temps de les charger dans le programme et de les intégrer à la pipeline graphique. Nous allons d'abord écrire une fonction qui réalisera le chargement des données binaires à partir des fichiers.
+Créons une fonction `createGraphicsPipeline` et appelons-la depuis `initVulkan` après `createImageViews`. 
 
 ```cpp
-#include <fstream>
-
-...
-
-static std::vector<char> readFile(const std::string& filename) {
-    std::ifstream file(filename, std::ios::ate | std::ios::binary);
-
-    if (!file.is_open()) {
-        throw std::runtime_error(std::string {"échec de l'ouverture du fichier "} + filename + "!");
-    }
-}
-```
-
-La fonction `readFile` lira tous les octets du fichier qu'on lui indique et les retournera dans un `vector` de caractères servant ici d'octets. L'ouverture du fichier se fait avec deux paramètres particuliers :
-
-* `ate` : permet de commencer la lecture à la fin du fichier
-* `binary` : indique que le fichier doit être lu comme des octets et que ceux-ci ne doivent pas être formatés
-
-Commencer la lecture à la fin permet d'utiliser la position du pointeur comme indicateur de la taille totale du fichier et nous pouvons ainsi allouer un stockage suffisant :
-
-```cpp
-size_t fileSize = (size_t) file.tellg();
-std::vector<char> buffer(fileSize);
-
-file.seekg(0);
-file.read(buffer.data(), fileSize);
-
-file.close();
-
-return buffer;
-```
-
- Appelons maintenant cette fonction depuis `createGraphicsPipeline` pour charger les bytecodes des deux shaders :
-
-```cpp
-void createGraphicsPipeline() {
-    auto vertShaderCode = readFile("shaders/vert.spv");
-    auto fragShaderCode = readFile("shaders/frag.spv");
-}
-```
-
-### Créer des modules shader <a id="page_Crer-des-modules-shader"></a>
-
-Avant de passer ce code à la pipeline nous devons en faire un `VkShaderModule`. Créez pour cela une fonction `createShaderModule`.
-
-```cpp
-VkShaderModule createShaderModule(const std::vector<char>& code) {
-
-    VkShaderModuleCreateInfo createInfo{};
-    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.codeSize = code.size();
-    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-    
-    VkShaderModule shaderModule;
-    if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-        throw std::runtime_error("échec de la création d'un module shader!");
-    }
-    
-    return shaderModule;
-}
-```
-
- Les modules shaders ne sont au fond qu'une fine couche autour du byte code chargé depuis les fichiers. Au moment de la création de la pipeline, les codes des shaders sont compilés et mis sur la carte. Nous pouvons donc détruire les modules dès que la pipeline est crée. Nous en ferons donc des variables locales à la fonction `createGraphicsPipeline` :
-
-```cpp
-void createGraphicsPipeline() {
-    auto vertShaderModule = createShaderModule(vertShaderCode);
-    fragShaderModule = createShaderModule(fragShaderCode);
-
-    vertShaderModule = createShaderModule(vertShaderCode);
-    fragShaderModule = createShaderModule(fragShaderCode);
-```
-
- Ils doivent être libérés une fois que la pipeline est créée, juste avant que `createGraphicsPipeline` ne retourne. Ajoutez ceci à la fin de la fonction :
-
-```cpp
+void initVulkan() {
     ...
-    vkDestroyShaderModule(device, fragShaderModule, nullptr);
-    vkDestroyShaderModule(device, vertShaderModule, nullptr);
+    createImageViews();
+    createGraphicsPipeline();
 }
 ```
 
-### Création des étapes shader <a id="page_Cration-des-tapes-shader"></a>
-
-Nous devons assigner une étape shader aux modules que nous avons crées. Nous allons utiliser une structure du type `VkPipelineShaderStageCreateInfo` pour cela.
-
-Nous allons d'abord remplir cette structure pour le vertex shader, une fois de plus dans la fonction `createGraphicsPipeline`.
+### Pipeline Layout
 
 ```cpp
-VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
-vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+const VkDescriptorSetLayout layouts[]               = {m_descriptorSetLayout.handle()};
+const VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
+    .sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+    .setLayoutCount = 1,
+    .pSetLayouts    = layouts,
+};
 
-vertShaderStageInfo.module = vertShaderModule;
-vertShaderStageInfo.pName = "main";
+if (vkCreatePipelineLayout(m_device.logical(), &pipelineLayoutInfo, nullptr, &m_layout) != VK_SUCCESS) {
+  throw std::runtime_error("Pipeline Layout creation failed");
+}
 ```
 
-Modifier la structure pour qu'elle corresponde au fragment shader est très simple :
+### Graphic Pipeline
+
+#### Vertex Input
 
 ```cpp
-VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
-fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-fragShaderStageInfo.module = fragShaderModule;
-fragShaderStageInfo.pName = "main";
+VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
+    .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+    .vertexBindingDescriptionCount   = 0,
+    .vertexAttributeDescriptionCount = 0,
+};
 ```
 
-Intégrez ces deux valeurs dans un tableau que nous utiliserons plus tard et vous aurez fini ce chapitre!
+#### Input Assembly
 
 ```cpp
-VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
+/**
+  * On spécifie comment le GPU doit assemblée les données en entré
+  * Ici on organise nos sommets en triangles
+  */
+VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
+    .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+    .topology               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+    .primitiveRestartEnable = VK_FALSE,
+};
 ```
 
-C'est tout ce que nous dirons sur les étapes programmables de la pipeline. Dans le prochain chapitre nous verrons les étapes à fonction fixée.
+#### Viewport
+
+```cpp
+// Pipeline viewport
+viewport = {
+    .x      = 0.0f,
+    .y      = 0.0f,
+    .width  = static_cast<float>(swapChainExtent.width),
+    .height = static_cast<float>(swapChainExtent.height),
+    // Depth buffer range
+    .minDepth = 0.0f,
+    .maxDepth = 1.0f,
+};
+
+// Pixel boundary cutoff
+scissor = {
+    .offset  = {0, 0},
+    .extent = swapChainExtent,
+};
+
+// Combine viewport(s) and scissor(s) (some graphics cards allow multiple of each)
+VkPipelineViewportStateCreateInfo viewportState = {
+    .sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+    .viewportCount = 1,
+    .pViewports    = &viewport,
+    .scissorCount  = 1,
+    .pScissors     = &scissor,
+};
+```
+
+#### Rasterizer
+
+```cpp
+VkPipelineRasterizationStateCreateInfo rasterizer = {
+    .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+    // Clip fragments instead of clipping them to near and far planes
+    .depthClampEnable = VK_FALSE,
+    // Don't allow the rasterizer to discard geometry
+    .rasterizerDiscardEnable = VK_FALSE,
+    // Fill fragments
+    .polygonMode = VK_POLYGON_MODE_FILL,
+    .cullMode    = VK_CULL_MODE_BACK_BIT,
+    .frontFace   = VK_FRONT_FACE_COUNTER_CLOCKWISE,
+    // Bias depth values
+    // This is good for shadow mapping, but we're not doing that currently
+    // so we'll disable for now
+    .depthBiasEnable = VK_FALSE,
+    .lineWidth       = 1.0f,
+};
+```
+
+#### Multisampling
+
+```cpp
+VkPipelineMultisampleStateCreateInfo multisampling = {
+    .sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+    .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+    .sampleShadingEnable  = VK_FALSE,
+    .minSampleShading     = 1.0f,
+};
+```
+
+#### Color Blending
+
+```cpp
+VkPipelineColorBlendAttachmentState colorBlendAttachment = {
+    // Disable blending
+    .blendEnable    = VK_FALSE,
+    .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
+};
+
+VkPipelineColorBlendStateCreateInfo colorBlending = {
+    .sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+    .attachmentCount = 1,
+    .pAttachments    = &colorBlendAttachment,
+};
+```
+
+#### Depth Stencil
+
+```cpp
+VkPipelineDepthStencilStateCreateInfo depthStencil = {
+        .sType             = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+        .depthTestEnable   = VK_TRUE,
+        .depthWriteEnable  = VK_TRUE,
+        .depthCompareOp    = VK_COMPARE_OP_LESS_OR_EQUAL,  // Cull front faces
+        .stencilTestEnable = VK_FALSE,
+        .back = {
+                .compareOp = VK_COMPARE_OP_ALWAYS,
+        },
+};
+```
+
+
+
+```cpp
+const VkShaderModule vertShaderModule = createShaderModule(DEPTH_BASIC_VERT);
+shaderStages[0] = misc::pipelineShaderStageCreateInfo(vertShaderModule, VK_SHADER_STAGE_VERTEX_BIT);
+
+const VkGraphicsPipelineCreateInfo info = {
+    .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+    .stageCount          = 2,
+    .pStages             = shaderStages.data(),
+    .pVertexInputState   = &vertexInputInfo,
+    .pInputAssemblyState = &inputAssembly,
+    .pViewportState      = &viewportState,
+    .pRasterizationState = &rasterizer,
+    .pMultisampleState   = &multisampling,
+    .pDepthStencilState  = &depthStencil,
+    .pColorBlendState    = &colorBlending,
+    .pDynamicState       = nullptr,
+    .layout              = m_layout,
+    .renderPass          = m_renderPass.handle(),
+    // Pipeline will be used in first sub pass
+    .subpass            = 0,
+    .basePipelineHandle = VK_NULL_HANDLE,
+    .basePipelineIndex  = -1,
+};
+
+if (vkCreateGraphicsPipelines(m_device.logical(), VK_NULL_HANDLE, 1, &info, nullptr, &m_pipeline) != VK_SUCCESS) {
+  throw std::runtime_error("Graphics Pipeline creation failed");
+}
+```
 
 **Vidéo / Code :**
 
