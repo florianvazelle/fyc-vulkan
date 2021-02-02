@@ -84,25 +84,36 @@ void initVulkan() {
 ### Pipeline Layout
 
 ```cpp
-const VkDescriptorSetLayout layouts[]               = {m_descriptorSetLayout.handle()};
+VkPipelineLayout pipelineLayout;
+
 const VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
     .sType          = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-    .setLayoutCount = 1,
-    .pSetLayouts    = layouts,
+    .setLayoutCount = 0,
+    .pushConstantRangeCount = 0,
 };
 
-if (vkCreatePipelineLayout(m_device.logical(), &pipelineLayoutInfo, nullptr, &m_layout) != VK_SUCCESS) {
-  throw std::runtime_error("Pipeline Layout creation failed");
+if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+    throw std::runtime_error("Pipeline Layout creation failed");
 }
 ```
 
 ### Graphic Pipeline
 
+Nous allons maintenant définir notre Graphic Pipeline. Il s'agit d'un objet avec de nombreuses structures de configuration différentes.
+
 #### Vertex Input
+
+`VkPipelineVertexInputStateCreateInfo` contient les informations sur les Vertex Buffers. 
+
+{% hint style="info" %}
+C'est l'équivalent des Vertex Array Object sous OpenGL
+{% endhint %}
+
+Cependant dans ce tutoriel, nous écrivons nos données en dure dans le shader, donc nous l'initialiserons avec un état vide.
 
 ```cpp
 VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
-    .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+    .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
     .vertexBindingDescriptionCount   = 0,
     .vertexAttributeDescriptionCount = 0,
 };
@@ -110,11 +121,9 @@ VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
 
 #### Input Assembly
 
+`VkPipelineInputAssemblyStateCreateInfo` contient la configuration du type de topologie qui sera dessiné, c'est à dire qu'on spécifie comment le GPU doit assemblée les données en entré.
+
 ```cpp
-/**
-  * On spécifie comment le GPU doit assemblée les données en entré
-  * Ici on organise nos sommets en triangles
-  */
 VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
     .sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
     .topology               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
@@ -126,7 +135,7 @@ VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
 
 ```cpp
 // Pipeline viewport
-viewport = {
+VkViewport viewport = {
     .x      = 0.0f,
     .y      = 0.0f,
     .width  = static_cast<float>(swapChainExtent.width),
@@ -137,7 +146,7 @@ viewport = {
 };
 
 // Pixel boundary cutoff
-scissor = {
+VkRect2D scissor = {
     .offset  = {0, 0},
     .extent = swapChainExtent,
 };
@@ -153,6 +162,8 @@ VkPipelineViewportStateCreateInfo viewportState = {
 ```
 
 #### Rasterizer
+
+`VkPipelineRasterizationStateCreateInfo` contient la configuration de notre rastérisation. Par exemple, on va pouvoir activer ou désactiver la sélection de la face arrière, définir la largeur des ligne ou le wireframe ...
 
 ```cpp
 VkPipelineRasterizationStateCreateInfo rasterizer = {
@@ -175,6 +186,8 @@ VkPipelineRasterizationStateCreateInfo rasterizer = {
 
 #### Multisampling
 
+La structure `VkPipelineMultisampleCreateInfo` permet de configurer le multisampling qui permet de réaliser de l'anti-aliasing.
+
 ```cpp
 VkPipelineMultisampleStateCreateInfo multisampling = {
     .sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
@@ -185,6 +198,8 @@ VkPipelineMultisampleStateCreateInfo multisampling = {
 ```
 
 #### Color Blending
+
+`VkPipelineColorBlendAttachmentState` contrôle la manière dont ce pipeline combine la couleur donnée par notre fragment shader et la couleur déjà présente dans le framebuffer.
 
 ```cpp
 VkPipelineColorBlendAttachmentState colorBlendAttachment = {
@@ -200,28 +215,82 @@ VkPipelineColorBlendStateCreateInfo colorBlending = {
 };
 ```
 
-#### Depth Stencil
+#### Charger les shaders
+
+Nos shaders compilés en SPIR-V, il va falloir les lire :
 
 ```cpp
-VkPipelineDepthStencilStateCreateInfo depthStencil = {
-        .sType             = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-        .depthTestEnable   = VK_TRUE,
-        .depthWriteEnable  = VK_TRUE,
-        .depthCompareOp    = VK_COMPARE_OP_LESS_OR_EQUAL,  // Cull front faces
-        .stencilTestEnable = VK_FALSE,
-        .back = {
-                .compareOp = VK_COMPARE_OP_ALWAYS,
-        },
-};
+static std::vector<char> readFile(const std::string& filename) {
+    std::ifstream file(filename, std::ios::ate | std::ios::binary);
+    
+    if (!file.is_open()) {
+        throw std::runtime_error("failed to open file!");
+    }
+    
+    size_t fileSize = (size_t) file.tellg();
+    std::vector<char> buffer(fileSize);
+    
+    file.seekg(0);
+    file.read(buffer.data(), fileSize);
+    
+    file.close();
+    
+    return buffer;
+}
 ```
 
-
+Et les transformer en `VkShaderModule` :
 
 ```cpp
-const VkShaderModule vertShaderModule = createShaderModule(DEPTH_BASIC_VERT);
-shaderStages[0] = misc::pipelineShaderStageCreateInfo(vertShaderModule, VK_SHADER_STAGE_VERTEX_BIT);
+VkShaderModule createShaderModule(const std::vector<char>& code) {
+    VkShaderModuleCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    createInfo.codeSize = code.size();
+    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+    
+    VkShaderModule shaderModule;
+    if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create shader module!");
+    }
+    
+    return shaderModule;
+}
+```
 
-const VkGraphicsPipelineCreateInfo info = {
+Pour finir, initialisons un `std::vector<VkPipelineShaderStageCreateInfo> shaderStages` :
+
+```cpp
+auto vertShaderCode = readFile("shaders/vert.spv");
+auto fragShaderCode = readFile("shaders/frag.spv");
+
+VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
+VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+
+VkPipelineShaderStageCreateInfo vertShaderStageInfo = {
+    .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    .stage = VK_SHADER_STAGE_VERTEX_BIT;
+    .module = vertShaderModule;
+    .pName = "main";
+};
+
+VkPipelineShaderStageCreateInfo fragShaderStageInfo = {
+    .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+    .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+    .module = fragShaderModule,
+    .pName = "main",
+};
+
+std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {vertShaderStageInfo, fragShaderStageInfo};
+```
+
+#### Création
+
+Ensuite, on combine l'ensemble de nos objets dans une structure `VkGraphicsPipelineCreateInfo`.
+
+```cpp
+VkPipeline graphicsPipeline;
+
+const VkGraphicsPipelineCreateInfo pipelineInfo = {
     .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
     .stageCount          = 2,
     .pStages             = shaderStages.data(),
@@ -230,18 +299,15 @@ const VkGraphicsPipelineCreateInfo info = {
     .pViewportState      = &viewportState,
     .pRasterizationState = &rasterizer,
     .pMultisampleState   = &multisampling,
-    .pDepthStencilState  = &depthStencil,
     .pColorBlendState    = &colorBlending,
-    .pDynamicState       = nullptr,
     .layout              = m_layout,
     .renderPass          = m_renderPass.handle(),
-    // Pipeline will be used in first sub pass
-    .subpass            = 0,
-    .basePipelineHandle = VK_NULL_HANDLE,
-    .basePipelineIndex  = -1,
+    .subpass             = 0, // Pipeline will be used in first sub pass
+    .basePipelineHandle  = VK_NULL_HANDLE,
+    .basePipelineIndex   = -1,
 };
 
-if (vkCreateGraphicsPipelines(m_device.logical(), VK_NULL_HANDLE, 1, &info, nullptr, &m_pipeline) != VK_SUCCESS) {
+if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
   throw std::runtime_error("Graphics Pipeline creation failed");
 }
 ```
