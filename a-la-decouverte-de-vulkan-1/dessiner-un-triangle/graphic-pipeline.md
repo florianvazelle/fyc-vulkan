@@ -2,7 +2,7 @@
 
 Le Graphic Pipeline, au sens général, définit toute la tuyauterie, toute les opérations qu’exécute notre GPU pour nous sortir un rendu. Pour résumé, cette tuyauterie :
 
-* on lui passe en entré des Vertex/Index Buffers
+* on lui passe en entrée des Vertex/Index Buffers
 * on obtient en sortie des pixels rendus sur un Framebuffer
 
 Le Graphic Pipeline, au sens de Vulkan, est très complexe et nous n'allons donc en voir qu'une version simplifiée.
@@ -11,7 +11,7 @@ Le Graphic Pipeline, au sens de Vulkan, est très complexe et nous n'allons donc
 
 ## Shader
 
-Nous aurons donc deux étapes dite de shader. Créons un dossier `shaders` avec dedans les deux shaders, qui sont très classique, ci-dessous :
+Nous aurons donc deux étapes dites de shader. Créons un dossier `shaders` avec dedans les deux shaders, qui sont très classiques, ci-dessous :
 
 {% code title="shader.vert" %}
 ```cpp
@@ -62,7 +62,7 @@ void main() {
 
 ### Compilation en SPIR-V
 
-Nous en avions déjà parler, en Vulkan il faut compiler les shaders en bytecode SPIR-V. Le SPIR-V a un énorme intérêt d'intéropabilité des shaders. Il y a plusieurs outils pour cela, voici quelque exemple :
+Nous en avions déjà parlé, en Vulkan il faut compiler les shaders en bytecode SPIR-V. Le SPIR-V a un énorme intérêt d'intéropabilité des shaders. Il y a plusieurs outils pour cela, voici quelque exemple :
 
 * pour la compilation GLSL : `glslc`, `glslangValidator`
 * pour la compilation des compute shader OpenCL : `clspv`
@@ -123,7 +123,7 @@ VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
 
 #### Input Assembly
 
-`VkPipelineInputAssemblyStateCreateInfo` contient la configuration du type de topologie qui sera dessiné, c'est à dire qu'on spécifie comment le GPU doit assemblée les données en entré.
+`VkPipelineInputAssemblyStateCreateInfo` contient la configuration du type de topologie qui sera dessinée, c'est-à-dire qu'on spécifie comment le GPU doit assembler les données en entrée.
 
 ```cpp
 VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
@@ -165,7 +165,7 @@ VkPipelineViewportStateCreateInfo viewportState = {
 
 #### Rasterizer
 
-`VkPipelineRasterizationStateCreateInfo` contient la configuration de notre rastérisation. Par exemple, on va pouvoir activer ou désactiver la sélection de la face arrière, définir la largeur des ligne ou le wireframe ...
+`VkPipelineRasterizationStateCreateInfo` contient la configuration de notre rastérisation. Par exemple, on va pouvoir activer ou désactiver la sélection de la face arrière, définir la largeur des lignes ou le wireframe ...
 
 ```cpp
 VkPipelineRasterizationStateCreateInfo rasterizer = {
