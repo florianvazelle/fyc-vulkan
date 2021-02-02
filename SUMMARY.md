@@ -17,7 +17,7 @@
   * [Render Pass](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/render-pass.md)
   * [Frame Buffers](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/frame-buffers.md)
   * [Command Buffers](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/command-buffers.md)
-  * [Derniers pas](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/last-step.md)
+  * [La fin est proche](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/last-step.md)
 * [Pour aller plus loin](a-la-decouverte-de-vulkan-1/pour-aller-plus-loin.md)
 * [Références](a-la-decouverte-de-vulkan-1/references.md)
 
