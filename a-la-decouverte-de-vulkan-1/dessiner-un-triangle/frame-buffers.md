@@ -18,12 +18,6 @@ void initVulkan() {
     createGraphicsPipeline();
     createFramebuffers();
 }
-
-...
-
-void createFramebuffers() {
-
-}
 ```
 
 Commencez par redimensionner le conteneur afin qu'il puisse stocker tous les framebuffers :
