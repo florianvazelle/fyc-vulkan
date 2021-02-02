@@ -14,14 +14,7 @@ std::vector<VkFramebuffer> swapChainFramebuffers;
 
 ```cpp
 void initVulkan() {
-    createInstance();
-    setupDebugMessenger();
-    createSurface();
-    pickPhysicalDevice();
-    createLogicalDevice();
-    createSwapChain();
-    createImageViews();
-    createRenderPass();
+    ...
     createGraphicsPipeline();
     createFramebuffers();
 }
@@ -64,7 +57,7 @@ for (size_t i = 0; i < swapChainImageViews.size(); i++) {
 }
 ```
 
- Nous devons détruire les framebuffers avant les image views et la render pass dans la fonction `cleanup` :
+ Pour la destruction, une simple boucle qui parcoures l'ensemble des frame, dans `cleanup`, et un appel a la fonction `vkDestroyFramebuffer` comme ce ci :
 
 ```cpp
 void cleanup() {
@@ -75,8 +68,6 @@ void cleanup() {
     ...
 }
 ```
-
-Nous avons atteint le moment où tous les objets sont prêts pour l'affichage. Dans le prochain chapitre nous allons écrire les commandes d'affichage.
 
 **Vidéo / Code :**
 
