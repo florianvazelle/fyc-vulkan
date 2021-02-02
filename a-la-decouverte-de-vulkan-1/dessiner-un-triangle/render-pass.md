@@ -11,6 +11,8 @@ Une Render Pass \(passe de rendu en francais\) est une description générale de
 
 ## Description de l'attachment
 
+La première chose que nous commençons à écrire est l'attachment de couleur. C'est plus ou moins une description de l'image qui sera utilisé par nos commandes de rendu. L'image utilisera le même format que la SwapChain.
+
 ```cpp
 const VkAttachmentDescription colorAttachmentSwapChain = {
       // Le format doit correspondre au format de la chaîne d'échange
