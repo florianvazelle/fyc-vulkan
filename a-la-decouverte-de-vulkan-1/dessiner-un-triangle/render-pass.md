@@ -132,7 +132,9 @@ vkDestroyRenderPass(device, renderPass, nullptr);
 
 {% embed url="https://youtu.be/lcpTghd0\_KQ" %}
 
-{% file src="../../.gitbook/assets/part-13-conclusion.cpp" caption="Finalisation Graphic Pipeline" %}
+{% file src="../../.gitbook/assets/part-13-finalisation-graphic-pipeline.cpp" %}
 
-{% embed url="https://youtu.be/aa-cEU2EbGA" %}
+{% embed url="https://youtu.be/A8bq6AQLN3M" %}
+
+
 
