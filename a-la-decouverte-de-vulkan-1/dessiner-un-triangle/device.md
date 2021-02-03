@@ -99,7 +99,7 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
 
 `std::optional` est un wrapper qui ne contient aucune valeur tant que vous ne lui en assignez pas une. Vous pouvez, quelque soit le moment, lui demander s'il contient une valeur ou non en appelant sa fonction membre `has_value()`. On peut donc changer le code comme suit :
 
-`std::optional` est un wrapper qui est vide si on lui assigne rien. Mais on peut utiliser la fonction `has_value()` pour demander s'il est vide ou pas. Donc on vas modifier la fonction comme ainsi:
+`std::optional` est un wrapper qui est vide si on lui assigne rien. On peut utiliser la fonction `has_value()` pour demander s'il est vide ou pas. Donc on vas modifier la fonction comme ainsi:
 
 ```cpp
 #include <optional>
