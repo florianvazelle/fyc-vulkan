@@ -13,7 +13,7 @@ description: >-
 
 Cette librairie déjà initialisée dans la partie `VkInstance`. Donc on peut maintenant choisir directement la carte graphique qui est compatible aux fonctionnalités de notre librairie. On peut aussi en sélectionner plusieurs et de travailler en même temps dessus. Mais dans le cas de ce tutoriel l'utilisation sera seulement sur une carte graphique, cela vas nous permettre de mieux comprendre.
 
-On vas crée une fonction `pickPhysicalDevice` puis l'appelez dans la fonciton initVulkan :
+On vas créer une fonction `pickPhysicalDevice` puis l'appelez dans la fonction initVulkan :
 
 ```cpp
 void initVulkan() {
@@ -27,7 +27,7 @@ void pickPhysicalDevice() {
 }
 ```
 
-Nous allons crée une variable du type `VkPhysicalDevice` qui vas stocker notre physical device. Il sera automatiquement détruit, donc on n'a pas besoin de passer par la fonction `cleanup`.
+Nous allons créer une variable du type `VkPhysicalDevice` qui vas stocker notre physical device. Il sera automatiquement détruit, donc on n'a pas besoin de passer par la fonction `cleanup`.
 
 ```cpp
 void pickPhysicalDevice() {
@@ -80,8 +80,6 @@ uint32_t findQueueFamilies(VkPhysicalDevice device) {
     // Code servant à trouver la famille de queue "graphique"
 }
 ```
-
-Mais dans un des prochains chapitres, nous allons avoir besoin d'une autre famille de queues, il est donc plus intéressant de s'y préparer dès maintenant en regroupant plusieurs indices dans une structure :
 
 Il existe une autre famille de queues que nous allons voir plus tard, mais on peut déjà commencer a le déclarer en rassemblant tout les indices dans la struct `QueueFamilyIndices`.
 
@@ -178,13 +176,11 @@ Voilà ce qui est du coté des périphériques physique et les QueueFamilies. Ma
 
 ## Logical
 
-Comme toujours ajoutons une variable de type VkDevice dont on aura besoin plustard.
+Comme toujours ajoutons une variable de type VkDevice dont on aura besoin plus tard.
 
 ```cpp
 VkDevice device;
 ```
-
- Ajoutez ensuite une fonction `createLogicalDevice` et appelez-la depuis `initVulkan`.
 
 On vas créer une fonction `createLogicalDevice`. Ce logical device vas nous servir comme interface, Il se crée de la même manière qu'une "Instance".
 
