@@ -106,6 +106,11 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
+    
+    //Fonction Générique
+    bool isComplete() {
+        return graphicsFamily.has_value();
+    }
 };
 
 QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
@@ -123,36 +128,35 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
 QueueFamilyIndices findQueueFamily(VkPhysicalDevice) {
     QueueFamilyIndices indices;
 
-    ...
-
+    //Recuperation de la liste des queue families disponibles
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+    
+    // "VkQueueFamilyProperties" qui contient les info sur la queue family
+    // comme le type d'operation mais aussi le nombre de queues qu'on peut créer.
+    std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+    
+    //Trouvons aumoin une queue qui supporte "VK_QUEUE_GRAPHICS_BIT"
+    int i = 0;
+    for (const auto& queueFamily : queueFamilies) {
+        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            indices.graphicsFamily = i;
+        }
+        
+        //Sortir de la boucle des que c'est terminer
+        if (indices.isComplete()) {
+        break;
+        }
+    
+        i++;
+    }
+    
     return indices;
 }
 ```
 
-Récupérer la liste des queue families disponibles se fait de la même manière que d'habitude avec la fonction `vkGetPhysicalDeviceQueueFamilyProperties` :
-
-```cpp
-uint32_t queueFamilyCount = 0;
-vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-```
-
- La structure `VkQueueFamilyProperties` contient des informations sur la queue family et en particulier le type d'opération qu'elle supporte et le nombre de queues que l'on peut instancier à partir de cette famille. Nous devons trouver au moins une queue supportant `VK_QUEUE_GRAPHICS_BIT` :
-
-```cpp
-int i = 0;
-for (const auto& queueFamily : queueFamilies) {
-    if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-        indices.graphicsFamily = i;
-    }
-
-    i++;
-}
-```
-
-Nous pouvons maintenant utiliser cette fonction dans `isDeviceSuitable` pour s'assurer que le physical device peut recevoir les commandes que nous voulons lui envoyer :
+Cette fois-ci modifions la fonction `isDeviceSuitable` pour qu'on vérifie que notre GPU reçois les information que nous avons envoyé. 
 
 ```cpp
 bool isDeviceSuitable(VkPhysicalDevice device) {
@@ -162,41 +166,7 @@ bool isDeviceSuitable(VkPhysicalDevice device) {
 }
 ```
 
-Pour que ce soit plus pratique, nous allons aussi ajouter une fonction générique à la structure :
-
-```cpp
-struct QueueFamilyIndices {
-    std::optional<uint32_t> graphicsFamily;
-
-    bool isComplete() {
-        return graphicsFamily.has_value();
-    }
-};
-
-...
-
-bool isDeviceSuitable(VkPhysicalDevice device) {
-    QueueFamilyIndices indices = findQueueFamilies(device);
-
-    return indices.isComplete();
-}
-```
-
- On peut également utiliser ceci pour sortir plus tôt de `findQueueFamilies`:
-
-```cpp
-for (const auto& queueFamily : queueFamilies) {
-    ...
-
-    if (indices.isComplete()) {
-        break;
-    }
-
-    i++;
-}
-```
-
-C'est tout ce dont nous aurons besoin pour choisir le bon physical device ! La prochaine étape est de créer un logical device pour créer une interface avec la carte.
+Voilà ce qui est du coté des périphériques physique et les QueueFamilies. Maintenant on vas passer aux périphériques Logique.
 
 **Vidéo / Code :**
 
@@ -208,13 +178,15 @@ C'est tout ce dont nous aurons besoin pour choisir le bon physical device ! La p
 
 ## Logical
 
-Commencez par ajouter un nouveau membre donnée pour stocker la référence au logical device.
+Comme toujours ajoutons une variable de type VkDevice dont on aura besoin plustard.
 
 ```cpp
 VkDevice device;
 ```
 
  Ajoutez ensuite une fonction `createLogicalDevice` et appelez-la depuis `initVulkan`.
+
+On vas créer une fonction `createLogicalDevice`. Ce logical device vas nous servir comme interface, Il se crée de la même manière qu'une "Instance".
 
 ```cpp
 void initVulkan() {
@@ -231,58 +203,65 @@ void createLogicalDevice() {
 
 ### Spécifier les queues à créer <a id="page_Spcifier-les-queues--crer"></a>
 
-La création d'un logical device requiert encore que nous remplissions des informations dans des structures. La première de ces structures s'appelle [`VkDeviceQueueCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceQueueCreateInfo.html). Elle indique le nombre de queues que nous désirons pour chaque queue family. Pour le moment nous n'avons besoin que d'une queue originaire d'une unique queue family : la première avec un support pour les graphismes.
+Le logical device a aussi besoin des informations qu'il faut qu'on lui associes :
 
 ```cpp
-QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
-
-VkDeviceQueueCreateInfo queueCreateInfo{};
-queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-queueCreateInfo.queueCount = 1;
-
-float queuePriority = 1.0f;
-queueCreateInfo.pQueuePriorities = &queuePriority;
-```
-
-### Spécifier les fonctionnalités utilisées <a id="page_Spcifier-les-fonctionnalits-utilises"></a>
-
- Les prochaines informations à fournir sont les fonctionnalités du physical device que nous souhaitons utiliser. Ce sont celles dont nous avons vérifié la présence avec [`vkGetPhysicalDeviceFeatures`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceFeatures.html) dans le chapitre précédent. Nous pouvons nous contenter de créer la structure et de tout laisser à `VK_FALSE`, valeur par défaut. Nous reviendrons sur cette structure quand nous ferons des choses plus élaborées avec Vulkan.
-
-```cpp
-VkPhysicalDeviceFeatures deviceFeatures{};
+void createLogicalDevice() {
+    QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+    
+    //VkDeviceQueueCreateInfo indiquons le nombre de queues qu'on donne pour 
+    //chaque family.On utilisera une queue pour l'instant pour simplifier.
+    VkDeviceQueueCreateInfo queueCreateInfo{};
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+    queueCreateInfo.queueCount = 1;
+    
+    //Pour l'instant on a une seule queue, mais il est toujours preferable de 
+    //indiquer une priorité avec "pQueuePriorities" qui varie entre 0.0 et 1.0.
+    float queuePriority = 1.0f;
+    queueCreateInfo.pQueuePriorities = &queuePriority;
+}
 ```
 
 ### Créer le logical device <a id="page_Crer-le-logical-device"></a>
 
-Avec ces deux structure prêtes, nous pouvons enfin remplir la structure principale appelée [`VkDeviceCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceCreateInfo.html).
+Une fois terminer avec la structure Queue on peut maintenant passer à la structure principale  qui s'appelle [`VkDeviceCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceCreateInfo.html).
 
 ```cpp
-VkDeviceCreateInfo createInfo{};
-createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+void createLogicalDevice() {
 
-createInfo.pQueueCreateInfos = &queueCreateInfo;
-createInfo.queueCreateInfoCount = 1;
-
-createInfo.pEnabledFeatures = &deviceFeatures;
-
-createInfo.enabledExtensionCount = 0;
-
-if (enableValidationLayers) {
-    createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-    createInfo.ppEnabledLayerNames = validationLayers.data();
-} else {
-    createInfo.enabledLayerCount = 0;
-}
-
-if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
-    throw std::runtime_error("échec lors de la création d'un logical device!");
+    ...
+    
+    VkPhysicalDeviceFeatures deviceFeatures{};
+    
+    //Creation de la structure
+    VkDeviceCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    
+    createInfo.pQueueCreateInfos = &queueCreateInfo;
+    createInfo.queueCreateInfoCount = 1;
+    
+    createInfo.pEnabledFeatures = &deviceFeatures;
+    
+    
+    createInfo.enabledExtensionCount = 0;
+    
+    //Gere la compatibilités avec les anciennes implémentations
+    if (enableValidationLayers) {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+    } else {
+        createInfo.enabledLayerCount = 0;
+    }
+    
+    //Controle d'erreur
+    if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+        throw std::runtime_error("échec lors de la création d'un logical device!");
+    }
 }
 ```
 
-Les paramètres sont d'abord le physical device dont on souhaite extraire une interface, ensuite la structure contenant les informations, puis un pointeur optionnel pour l'allocation et enfin un pointeur sur la référence au logical device créé. Vérifions également si la création a été un succès ou non, comme lors de la création de l'instance.
-
-Le logical device doit être explicitement détruit dans la fonction `cleanup` avant le physical device :
+Il ne faut pas oublier de le détruire avant le physical device:
 
 ```cpp
 void cleanup() {
@@ -293,15 +272,16 @@ void cleanup() {
 
 ### Récupérer des références aux queues <a id="page_Rcuprer-des-rfrences-aux-queues"></a>
 
-Les queue families sont automatiquement crées avec le logical device. Cependant nous n'avons aucune interface avec elles. Ajoutez un membre donnée pour stocker une référence à la queue family supportant les graphismes :
+Le type VkQueue va nous permete de stocker la reference de la queue family qui est compatible avec le graphisme. 
 
 ```cpp
 VkQueue graphicsQueue;
 
+//recuperer les references des queues
 vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 ```
 
-Avec le logical device et les queues nous allons maintenant pouvoir faire travailler la carte graphique ! Dans le prochain chapitre nous mettrons en place les ressources nécessaires à la présentation des images à l'écran.
+Maintenant qu'on a terminer avec les deux Devices et la gestion des Queues. On peut passer sur la mise en place des ressources pour pouvoir afficher ce qu'on veut sur notre fenêtre.
 
 **Vidéo / Code :**
 
