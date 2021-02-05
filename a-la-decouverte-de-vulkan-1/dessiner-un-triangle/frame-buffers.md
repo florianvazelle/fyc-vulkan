@@ -1,26 +1,14 @@
 # Frame Buffers
 
-Nous avons beaucoup parlé de framebuffers dans les chapitres précédents, et nous avons mis en place la Render Pass pour qu'elle en accepte un du même format que les images de la swap chain. Pourtant nous n'en avons encore créé aucun.
+Dans le chapitre précédent, nous avons parlé de Frame Buffers, et nous avons mis en place la Render Pass pour qu'elle en accepte un du même format que les images de la Swap Chain. C'est le moment de découvrir cette notion pourtant très importante, complexe, mais très simple à mettre en oeuvre.
 
-Les attachements de différents types spécifiés durant la Render Pass sont liés en les considérant dans des objets de type `VkFramebuffer`. Un tel objet référence toutes les `VkImageView` utilisées comme attachements par une passe. Dans notre cas nous n'en aurons qu'un : un attachment de couleur, qui servira de cible d'affichage uniquement. Cependant l'image utilisée dépendra de l'image fournie par la swap chain lors de la requête pour l'affichage. Nous devons donc créer un framebuffer pour chacune des images de la swap chain et utiliser le bon au moment de l'affichage.
+Chaque attachments que nous avons créé dans notre Render Pass doit être utilisé lorsque nous initialisons un Frame Buffer. De plus, nous initialiserons un Frame Buffer par `VkImageView` contenu dans la Swap Chain. 
 
-Pour cela créez un autre `std::vector` qui contiendra des framebuffers :
+Mais ce n'est pas obligatoire, par exemple, vous pouvez rendre une texture en créant votre propre `VkImage` avec les indicateurs d'utilisation `VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT` afin qu'il puisse être écrit en tant qu'attachment de couleur, puis échantillonné dans un shader. Cependant, ici nous n'avons qu'un attachment de couleur, correspondant à celui de la Swap Chain.
 
-```cpp
-std::vector<VkFramebuffer> swapChainFramebuffers;
-```
+## Création
 
- Nous allons remplir ce `vector` depuis une nouvelle fonction `createFramebuffers` que nous appellerons depuis `initVulkan` juste après la création de la pipeline graphique :
-
-```cpp
-void initVulkan() {
-    ...
-    createGraphicsPipeline();
-    createFramebuffers();
-}
-```
-
-Commencez par redimensionner le conteneur afin qu'il puisse stocker tous les framebuffers :
+Pour cela créez un `std::vector<VkFramebuffer> swapChainFramebuffers` et redimensionnons le  afin qu'il puisse stocker tous les Frame Buffers :
 
 ```cpp
 void createFramebuffers() {
@@ -28,30 +16,33 @@ void createFramebuffers() {
 }
 ```
 
-Nous allons maintenant itérer à travers toutes les images et créer un framebuffer à partir de chacune d'entre elles :
+Comme expliquer plus haut, parcourons toutes les images de la Swap Chain pour créer un Frame Buffer à partir de chacune d'entre elles :
 
 ```cpp
+VkImageView attachments[1];
+
+VkFramebufferCreateInfo framebufferInfo ={
+    .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+    .renderPass      = renderPass,
+    .attachmentCount = 1,
+    .pAttachments    = attachments,
+    .width           = swapChainExtent.width,
+    .height          = swapChainExtent.height,
+    .layers          = 1,
+};
+
 for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-    VkImageView attachments[] = {
-        swapChainImageViews[i]
-    };
-
-    VkFramebufferCreateInfo framebufferInfo{};
-    framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    framebufferInfo.renderPass = renderPass;
-    framebufferInfo.attachmentCount = 1;
-    framebufferInfo.pAttachments = attachments;
-    framebufferInfo.width = swapChainExtent.width;
-    framebufferInfo.height = swapChainExtent.height;
-    framebufferInfo.layers = 1;
-
+    attachments[0] = swapChainImageViews[i];    
+    
     if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) {
         throw std::runtime_error("échec de la création d'un framebuffer!");
     }
 }
 ```
 
- Pour la destruction, une simple boucle qui parcoure l'ensemble des frame, dans `cleanup`, et un appel a la fonction `vkDestroyFramebuffer` comme ce ci :
+## Destruction
+
+Pour la destruction, une simple boucle qui parcoure l'ensemble des frames, dans `cleanup`, et un appel a la fonction `vkDestroyFramebuffer` comme ce ci :
 
 ```cpp
 void cleanup() {
