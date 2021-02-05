@@ -8,11 +8,11 @@ Pour autant, la présentation d'image à l'écran n'est pas gérée par Vulkan d
 
 A noter que la présentation d'image peut être gérer de façon différente suivant les plateformes cibles.
 
-Les objets qui permettent la présentation sont appelés **surface** et sont représenté dans Vulkan par des `VKSurfaceKHR`. On accède à ces objets avec l'extension VK\_KHR\_surface.
+Les objets qui permettent la présentation sont appelés **surface** et sont représenté dans Vulkan par des `VKSurfaceKHR`. On accède à ces objets avec l'extension `VK_KHR_surface`.
 
 ### Présentation sur Microsoft Windows
 
-Avant de pouvoir présenter des images, nous devons nous assurer qu'au moins une queueFamily supporte les fonctions de présentation.
+Avant de pouvoir présenter des images, nous devons nous assurer qu'au moins une Queue Family supporte les fonctions de présentation.
 
 Sur Windows on peut appeler:
 
@@ -22,9 +22,9 @@ VkBool32 vkGetPhysicalDeviceWin32PresentationSupportKHR(
     uint32_t                                    queueFamilyIndex);
 ```
 
-Cette fonction nous dit si la queueFamily supporte ou non la présentation.
+Cette fonction nous dit si la Queue Family supporte ou non la présentation.
 
-Si au moins une queueFamily supporte la présentation, on peut créer notre surface:
+Si au moins une Queue Family supporte la présentation, on peut créer notre surface:
 
 ```cpp
 VkResult vkCreateWin32SurfaceKHR(
@@ -65,9 +65,9 @@ vkDestroySurfaceKHR(instance, surface, nullptr);
 
 ### Création d'une Queue et traitement de l'affichage
 
-Les `Queues` sont les composants du device qui vont effectuer les opérations. Chaque queue appartient à  une ou plusieurs `Queue families`. Les queues d'une même queue family sont identiques et ont les mêmes propriétés. En fonction du device que l'on utilise, leur nombre peut varier fortement.
+Les `Queues` sont les composants du Device qui vont effectuer les opérations. Chaque queue appartient à  une ou plusieurs `Queue families`. Les queues d'une même Queue Family sont identiques et ont les mêmes propriétés. En fonction du device que l'on utilise, leur nombre peut varier fortement.
 
-Pour connaitre les propriétés de chaque queue family ainsi que leur nombre, on peut appeler la fonction vkGetPhysicalDeviceQueueFamilyProperties\(\).
+Pour connaitre les propriétés de chaque Queue Family ainsi que leur nombre, on peut appeler la fonction `vkGetPhysicalDeviceQueueFamilyProperties()`.
 
 ```cpp
 void vkGetPhysicalDeviceQueueFamilyProperties(
@@ -92,9 +92,9 @@ VkDeviceQueueCreateInfo queueCreateInfo{};
     queueCreateInfo.pQueuePriorities = &queuePriority;
 ```
 
-Cette structure doit étre configurée à la création du device et passé en paramètre à la structure `VkDeviceCreateInfo{}`.
+Cette structure doit être configurée à la création du Device et passé en paramètre à la structure `VkDeviceCreateInfo{}`.
 
-En effet, les queues et leur famille sont générée à la création du device. Ensuite on a juste à les récupérer avec la fonction `vkGetDeviceQueue()`.
+En effet, les queues et leur famille sont générée à la création du Device. Ensuite on a juste à les récupérer avec la fonction `vkGetDeviceQueue()`.
 
 ```cpp
 void vkGetDeviceQueue(
@@ -104,11 +104,11 @@ void vkGetDeviceQueue(
     VkQueue*                                    pQueue);
 ```
 
-On passe en parametre notre pointeur vers notre "presentQueue" par exemple:
+On passe en paramètre notre pointeur vers notre `presentQueue` par exemple:
 
 `vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);`
 
-Notre Queue de présentation est à présent prête à l'emploi, on verra dans un prochain chapitre comment lui faire exécuter des tâches à travers les `Command Buffer`.
+Notre Queue de présentation est à présent prête à l'emploi, on verra dans un prochain chapitre comment lui faire exécuter des tâches à travers les Command Buffers.
 
 **Vidéo / Code :**
 

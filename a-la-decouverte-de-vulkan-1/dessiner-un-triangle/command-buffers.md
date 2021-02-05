@@ -2,13 +2,13 @@
 
 ### Command Pool <a id="page_Command-pools"></a>
 
-Nous devons créer une _command pool_ avant de pouvoir créer les command buffers. Les command pools gèrent la mémoire utilisée par les buffers, et c'est de fait les command pools qui nous instancient les command buffers. Ajoutez un nouveau membre donnée à la classe de type `VkCommandPool` :
+Nous devons créer une Command Pool avant de pouvoir créer les command buffers. Les command pools gèrent la mémoire utilisée par les buffers, et c'est de fait les command pools qui nous instancient les command buffers. Ajoutez un nouveau membre donnée à la classe de type `VkCommandPool` :
 
 ```cpp
 VkCommandPool commandPool;
 ```
 
-Créez ensuite la fonction `createCommandPool` et appelez-la depuis `initVulkan` après la création du framebuffer.
+Créez ensuite la fonction `createCommandPool` et appelez-la depuis `initVulkan` après la création du Frame Buffer.
 
 ```cpp
 void initVulkan() {
@@ -32,7 +32,7 @@ void createCommandPool() {
 }
 ```
 
-La création d'une command pool ne nécessite que deux paramètres :
+La création d'une Command Pool ne nécessite que deux paramètres :
 
 ```cpp
 QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
@@ -43,7 +43,7 @@ poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 poolInfo.flags = 0; // Optionel
 ```
 
-Nous n'enregistrerons les command buffers qu'une seule fois au début du programme, nous n'aurons donc pas besoin de ces fonctionnalités.
+Nous n'enregistrerons les Command Buffers qu'une seule fois au début du programme, nous n'aurons donc pas besoin de ces fonctionnalités.
 
 ```cpp
 if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
@@ -51,7 +51,7 @@ if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
 }
 ```
 
- Terminez la création de la command pool à l'aide de la fonction `vkCreateComandPool`. Elle ne comprend pas de paramètre particulier. Les commandes seront utilisées tout au long du programme pour tout affichage, nous ne devons donc la détruire que dans la fonction `cleanup` :
+Terminez la création de la Command Pool à l'aide de la fonction `vkCreateComandPool`. Elle ne comprend pas de paramètre particulier. Les commandes seront utilisées tout au long du programme pour tout affichage, nous ne devons donc la détruire que dans la fonction `cleanup` :
 
 ```cpp
 void cleanup() {
@@ -63,13 +63,13 @@ void cleanup() {
 
 ### Allocation des Command Buffers <a id="page_Allocation-des-command-buffers"></a>
 
-Nous pouvons maintenant allouer des command buffers et enregistrer les commandes d'affichage. Dans la mesure où l'une des commandes consiste à lier un framebuffer nous devrons les enregistrer pour chacune des images de la swap chain. Créez pour cela une liste de `VkCommandBuffer` et stockez-la dans un membre donnée de la classe. Les command buffers sont libérés avec la destruction de leur command pool, nous n'avons donc pas à faire ce travail.
+Nous pouvons maintenant allouer des Command Buffers et enregistrer les commandes d'affichage. Dans la mesure où l'une des commandes consiste à lier un Frame Buffer nous devrons les enregistrer pour chacune des images de la Swap Chain. Créez pour cela une liste de `VkCommandBuffer` et stockez-la dans un membre donnée de la classe. Les Command Buffers sont libérés avec la destruction de leur command pool, nous n'avons donc pas à faire ce travail.
 
 ```cpp
 std::vector<VkCommandBuffer> commandBuffers;
 ```
 
-Commençons maintenant à travailler sur notre fonction `createCommandBuffers` qui allouera et enregistrera les command buffers pour chacune des images de la swap chain.
+Commençons maintenant à travailler sur notre fonction `createCommandBuffers` qui allouera et enregistrera les Command Buffers pour chacune des images de la Swap Chain.
 
 ```cpp
 void initVulkan() {
@@ -94,7 +94,7 @@ void createCommandBuffers() {
 }
 ```
 
-Les command buffers sont alloués par la fonction `vkAllocateCommandBuffers` qui prend en paramètre une structure du type `VkCommandBufferAllocateInfo`. Cette structure spécifie la command pool et le nombre de buffers à allouer depuis celle-ci:
+Les Command Buffers sont alloués par la fonction `vkAllocateCommandBuffers` qui prend en paramètre une structure du type `VkCommandBufferAllocateInfo`. Cette structure spécifie la Command Pool et le nombre de buffers à allouer depuis celle-ci :
 
 ```cpp
 VkCommandBufferAllocateInfo allocInfo{};
@@ -110,7 +110,7 @@ if (vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) != VK_SU
 
 ### Enregistrement des Commandes <a id="page_Dbut-de-l-enregistrement-des-commandes"></a>
 
-Nous commençons l'enregistrement des commandes en appelant `vkBeginCommandBuffer`. Cette fonction prend une petite structure du type `VkCommandBufferBeginInfo` en argument, permettant d'indiquer quelques détails sur l'utilisation du command buffer.
+Nous commençons l'enregistrement des commandes en appelant `vkBeginCommandBuffer`. Cette fonction prend une petite structure du type `VkCommandBufferBeginInfo` en argument, permettant d'indiquer quelques détails sur l'utilisation du Command Buffer.
 
 ```cpp
 for (size_t i = 0; i < commandBuffers.size(); i++) {
@@ -125,9 +125,9 @@ for (size_t i = 0; i < commandBuffers.size(); i++) {
 }
 ```
 
-### Commencer une render pass <a id="page_Commencer-une-render-pass"></a>
+### Commencer une Render Pass <a id="page_Commencer-une-render-pass"></a>
 
-L'affichage commence par le lancement de la render pass réalisé par `vkCmdBeginRenderPass`. La passe est configurée à l'aide des paramètres remplis dans une structure de type `VkRenderPassBeginInfo`.
+L'affichage commence par le lancement de la Render Pass réalisé par `vkCmdBeginRenderPass`. La passe est configurée à l'aide des paramètres remplis dans une structure de type `VkRenderPassBeginInfo`.
 
 ```cpp
 VkRenderPassBeginInfo renderPassInfo{};
@@ -157,7 +157,7 @@ vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
 
 ### Finitions <a id="page_Finitions"></a>
 
-La render pass peut ensuite être terminée :
+La Render Pass peut ensuite être terminée :
 
 ```cpp
 vkCmdEndRenderPass(commandBuffers[i]);
@@ -167,7 +167,7 @@ if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
 }
 ```
 
-Dans le prochain chapitre nous écrirons le code pour la boucle principale. Elle récupérera une image de la swap chain, exécutera le bon command buffer et retournera l'image complète à la swap chain.
+Dans le prochain chapitre nous écrirons le code pour la boucle principale. Elle récupérera une image de la Swap Chain, exécutera le bon Command Buffer et retournera l'image complète à la Swap Chain.
 
 **Vidéo / Code :**
 

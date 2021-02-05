@@ -7,11 +7,11 @@ description: >-
 
 # Render Pass
 
-Une Render Pass \(passe de rendu en francais\) est une description générale des étapes de nos commandes de rendu, que nous verrons par la suite, ces étapes sont divisées en ressources utilisées pendant le rendu. Nous ne pouvons rien rendre dans Vulkan sans une passe de rendu. Et chaque passe de rendu doit comporter une ou plusieurs étapes. Ces étapes sont appelées, sous-passe.
+Une Render Pass  est une description générale des étapes de nos commandes de rendu, que nous verrons par la suite, ces étapes sont divisées en ressources utilisées pendant le rendu. Nous ne pouvons rien rendre dans Vulkan sans une passe de rendu. Et chaque passe de rendu doit comporter une ou plusieurs étapes. Ces étapes sont appelées, sous-passe.
 
 ## Description de l'attachment
 
-La première chose que nous commençons à écrire est l'attachment de couleur. C'est plus ou moins une description de l'image qui sera utilisé par nos commandes de rendu. L'image utilisera le même format que la SwapChain.
+La première chose que nous commençons à écrire est l'attachment de couleur. C'est plus ou moins une description de l'image qui sera utilisée par nos commandes de rendu. L'image utilisera le même format que la SwapChain.
 
 ```cpp
 const VkAttachmentDescription colorAttachmentSwapChain = {
@@ -28,7 +28,7 @@ const VkAttachmentDescription colorAttachmentSwapChain = {
 };
 ```
 
-Si on crée d'autre attachment le format peut être différent, il faut se référer à l'enum `VkFormat`. Mais par exemple, pour la couleur nous pourrions avoir la valeur `VK_FORMAT_R8G8B8A8_UNORM`, quand a la profondeur, on doit le déterminer en fonction du format supporter par le Device physique :
+Si on crée d'autre attachment le format peut être différent, il faut se référer à l'enum `VkFormat`. Mais par exemple, pour la couleur nous pourrions avoir la valeur `VK_FORMAT_R8G8B8A8_UNORM`, quand à la profondeur, on doit la déterminer en fonction du format supporté par le Device physique :
 
 ## Référence de attachment
 
@@ -43,7 +43,7 @@ Si on crée d'autre attachment le format peut être différent, il faut se réf�
 
 Les Subpasses utilisent une collection de ressources définies pour la passe de rendu. Les ressources de la passe de rendu peuvent inclure des cibles de rendu \(couleur, profondeur, résolution\) et des données d'entrée \(ressources qui, potentiellement, étaient des cibles de rendu dans les sous-passes précédentes de la même passe de rendu\) et ces ressources s'appellent, attachment \(elles n'incluent pas les descripteurs, textures, samplers et buffers\).
 
-Pourquoi ne les appelons-nous pas simplement des cibles de rendu ou des images ? Parce que nous ne les rendons pas seulement \(input attachment\) et parce que ce ne sont que des descriptions \(méta-données\). Les images qui doivent être utilisées comme attachments à l'intérieur des passes de rendu sont fournies via des buffers d'image.
+Pourquoi ne les appelons-nous pas simplement des cibles de rendu ou des images ? Parce que nous ne les rendons pas seulement \(input attachment\) et parce que ce ne sont que des descriptions \(méta-données\). Les images qui doivent être utilisées comme attachments à l'intérieur des passes de rendu sont fournies via des buffers d'images.
 
 Ici, restons simple et définissons une seul Subpass pour notre attachment reference :
 
@@ -57,7 +57,7 @@ const VkSubpassDescription subpassSwapChain = {
 
 ## Création du Render Pass
 
-Maintenant que nous avons créé notre attachment et une Subpass, nous pouvons maintenant créer la Render Pass. Pour cela il faut créer une variable VkRenderPass renderPass et lui spécifier les attchments et les Subpasses. Ici, nous avons définis un vector pour chaque type :
+Maintenant que nous avons créé notre attachment et une Subpass, nous pouvons maintenant créer la Render Pass. Pour cela il faut créer une variable `VkRenderPass renderPass` et lui spécifier les attchments et les Subpasses. Ici, nous avons définis un vector pour chaque type :
 
 ```cpp
 VkRenderPass renderPass;

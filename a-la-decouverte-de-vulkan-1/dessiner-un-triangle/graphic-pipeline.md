@@ -1,8 +1,8 @@
 # Graphic Pipeline
 
-Le Graphic Pipeline, au sens général, définit toute la tuyauterie, toute les opérations qu’exécute notre GPU pour nous sortir un rendu. Pour résumé, cette tuyauterie :
+Le Graphic Pipeline, au sens général, définit toute la tuyauterie, toutes les opérations qu’exécutent notre GPU pour nous sortir un rendu. Pour résumé, dans cette tuyauterie :
 
-* on lui passe en entrée des Vertex/Index Buffers
+* on dépose en entrée des Vertex/Index Buffers
 * on obtient en sortie des pixels rendus sur un Framebuffer
 
 Le Graphic Pipeline, au sens de Vulkan, est très complexe et nous n'allons donc en voir qu'une version simplifiée.
@@ -11,7 +11,7 @@ Le Graphic Pipeline, au sens de Vulkan, est très complexe et nous n'allons donc
 
 ## Shader
 
-Nous aurons donc deux étapes dites de shader. Créons un dossier `shaders` avec dedans les deux shaders, qui sont très classiques, ci-dessous :
+Nous aurons donc deux étapes dites de shader. Créons un dossier `shaders` contenant les deux shaders, qui sont très classiques, ci-dessous :
 
 {% code title="shader.vert" %}
 ```cpp
@@ -62,7 +62,7 @@ void main() {
 
 ### Compilation en SPIR-V
 
-Nous en avions déjà parlé, en Vulkan il faut compiler les shaders en bytecode SPIR-V. Le SPIR-V a un énorme intérêt d'intéropabilité des shaders. Il y a plusieurs outils pour cela, voici quelque exemple :
+Nous en avions déjà parlé, en Vulkan il faut compiler les shaders en bytecode SPIR-V. Le SPIR-V a un énorme intérêt d'interopérabilité des shaders. Il y a plusieurs outils pour cela, voici quelques exemples :
 
 * pour la compilation GLSL : `glslc`, `glslangValidator`
 * pour la compilation des compute shader OpenCL : `clspv`
@@ -83,7 +83,7 @@ void initVulkan() {
 
 ### Pipeline Layout
 
-Un Pipeline Layout contient les informations sur les entrées de shader \(DescritpeurSet\). C'est ici aussi que nous pouvons configurer des Push Constantes. Mais pour le moment, nous n'en avons pas besoin.
+Un Pipeline Layout contient les informations sur les entrées de shader \(DescritpeurSet\). C'est ici aussi que nous pouvons configurer des Push Constants. Mais pour le moment, nous n'en avons pas besoin.
 
 ```cpp
 VkPipelineLayout pipelineLayout;
@@ -101,7 +101,7 @@ if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout
 
 ### Graphic Pipeline
 
-Nous allons maintenant définir notre Graphic Pipeline. Il s'agit d'un objet avec de nombreuses structures de configuration différentes.
+Nous allons maintenant définir notre Graphic Pipeline. Il s'agit d'un objet avec de nombreuses structures de configurations différentes.
 
 #### Vertex Input
 
@@ -111,7 +111,7 @@ Nous allons maintenant définir notre Graphic Pipeline. Il s'agit d'un objet ave
 C'est l'équivalent des Vertex Array Object sous OpenGL
 {% endhint %}
 
-Cependant dans ce tutoriel, nous écrivons nos données en dure dans le shader, donc nous l'initialiserons avec un état vide.
+Cependant dans ce tutoriel, nous écrivons nos données en dur dans le shader, donc nous l'initialiserons avec un état vide.
 
 ```cpp
 VkPipelineVertexInputStateCreateInfo vertexInputInfo = {

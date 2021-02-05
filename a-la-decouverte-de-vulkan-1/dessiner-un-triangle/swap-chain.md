@@ -4,13 +4,17 @@ description: La Swap Chain est une file d'attente d'images prêtes à être affi
 
 # Swap Chain
 
-Dans notre rendu 3D, nous allons devoir afficher plusieurs images à la suite pour animer un objet par exemple. Afin d'afficher un flux d'image continue, nous devons mettre en place une SwapChain. 
+Dans notre rendu 3D, nous allons devoir afficher plusieurs images à la suite pour animer un objet par exemple. Afin d'afficher un flux d'image continue, nous devons mettre en place une Swap Chain. 
 
-Cette SwapChain va servir à préparer les rendus d'image avant de les afficher à l'écran. Le nombre d'image dans la SwapChain va dépendre des capacités de notre `VkSurfaceKHR.`
+Cette Swap Chain va servir à préparer les rendus d'images avant de les afficher à l'écran. Le nombre d'images dans la Swap Chain va dépendre des capacités de notre `VkSurfaceKHR.`
 
-A noter également que toute les cartes graphiques ne sont pas faite pour afficher des images à l'écran. Il est donc de la responsabilité du développeur de vérifier dans les extensions du device si la carte graphique peut gérer les SwapChain.
+À noter également que toutes les cartes graphiques ne sont pas faites pour afficher des images à l'écran. Il est donc de la responsabilité du développeur de vérifier dans les extensions du device si la carte graphique peut gérer les Swap Chains.
 
-Avant de créer la SwapChain à proprement parlé, on doit récupérer certaines informations et contraintes que l'on désire. Le tout sera ensuite injecté dans la fonction de création de celle-ci. Parmi ces informations se trouve: la surface,  le nombre d'image minimum, le format d'image, le format de couleur …
+Avant de créer la Swap Chain à proprement parlé, on doit récupérer certaines informations et contraintes que l'on désire. Le tout sera ensuite injecté dans la fonction de création de celle-ci. Parmi ces informations se trouve la surface,  le nombre d'images minimum, le format d'image, le format de couleur …
+
+> récupérer des informations : oui
+>
+> récupérer des contraintes : ??
 
 ```cpp
 VkSwapchainCreateInfoKHR createInfo = {
@@ -25,13 +29,13 @@ VkSwapchainCreateInfoKHR createInfo = {
 };
 ```
 
-Une fois que la structure de paramètre `createInfo` est crée, on déclare une SwapChain avec le type suivant:
+Une fois que la structure de paramètre `createInfo` est créée, on déclare une SwapChain avec le type suivant :
 
 ```cpp
 VkSwapchainKHR swapChain; 
 ```
 
-Et on l'initialise avec la fonction suivante \(on passe en paramètre les informations désirée ainsi que le device concerné\):
+Et on l'initialise avec la fonction suivante \(on passe en paramètres les informations désirées ainsi que le Device concerné\) :
 
 ```cpp
 if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
@@ -39,13 +43,13 @@ if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS
 }
 ```
 
-Afin de connaitre le nombre d'image dans la SwapChain on utilise la fonction:
+Afin de connaître le nombre d'images dans la Swap Chain on utilise la fonction :
 
 ```cpp
 vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
 ```
 
-Lorsque cette fonction est appelée, si le dernier paramètre vaut `nullptr`, la fonction retourne le nombre d'image que contient la SwapChain. Ensuite, il faut appeler la fonction une nouvelle fois en passant en paramètre un pointeur vers un tableau de `VkImage`. Ce deuxième appel va remplir le tableau d'image avec les images de la SwapChain.
+Lorsque cette fonction est appelée, si le dernier paramètre vaut `nullptr`, la fonction retourne le nombre d'images que contient la Swap Chain. Ensuite, il faut appeler la fonction une nouvelle fois en passant en paramètre un pointeur vers un tableau de `VkImage`. Ce deuxième appel va remplir le tableau d'images avec les images de la Swap Chain.
 
 On déclare le tableau de `VkImage` :
 
@@ -60,11 +64,11 @@ swapChainImages.resize(imageCount);
 vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
 ```
 
-Un bon reflexe à avoir est de garder dans une variable le nombre d'images contenu dans la SwapChain ainsi que le format des images.
+Un bon réflexe à avoir est de garder dans une variable le nombre d'images contenu dans la Swap Chain ainsi que le format des images.
 
-Grâce à la SwapChain, nous avons à chaque instant une liste d'images prête à être affiché à l'écran ou sur lesquelles on peut travailler.
+Grâce à la Swap Chain, nous avons à chaque instant une liste d'images prêtes à être affiché à l'écran ou sur lesquelles on peut travailler.
 
-A la fin du programme, il est important de libérer la mémoire occupée par la SwapChain. On peut libérer cette mémoire avec la fonction `vkDestroySwapchainKHR()`.
+À la fin du programme, il est important de libérer la mémoire occupée par la Swap Chain. On peut libérer cette mémoire avec la fonction `vkDestroySwapchainKHR()`.
 
 ```cpp
 void vkDestroySwapchainKHR(
@@ -72,10 +76,6 @@ void vkDestroySwapchainKHR(
     VkSwapchainKHR                              swapchain,
     const VkAllocationCallbacks*                pAllocator);
 ```
-
-
-
-
 
 **Vidéo / Code :**
 
@@ -89,7 +89,7 @@ void vkDestroySwapchainKHR(
 
 **Quizz :**
 
-Vous êtes arrivés à la moitié du tutoriel, vous pouvez maintenant tester vos connaissance grâce au test intermédiaire.
+Vous êtes arrivés à la moitié du tutoriel, vous pouvez maintenant tester vos connaissances grâce au test intermédiaire.
 
 {% page-ref page="../../exercices/quizz-intermediaire.md" %}
 

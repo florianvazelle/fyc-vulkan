@@ -9,11 +9,11 @@ description: >-
 
 ## Physical
 
-### Sélection d'un physical device <a id="page_Slection-d-un-physical-device"></a>
+### Sélection <a id="page_Slection-d-un-physical-device"></a>
 
 Cette librairie déjà initialisée dans la partie `VkInstance`. Donc on peut maintenant choisir directement la carte graphique qui est compatible aux fonctionnalités de notre librairie. On peut aussi en sélectionner plusieurs et de travailler en même temps dessus. Mais dans le cas de ce tutoriel l'utilisation sera seulement sur une carte graphique, cela vas nous permettre de mieux comprendre.
 
-On vas créer une fonction `pickPhysicalDevice` puis l'appelez dans la fonction initVulkan :
+On vas créer une fonction `pickPhysicalDevice` puis l'appelez dans la fonction `initVulkan` :
 
 ```cpp
 void initVulkan() {
@@ -27,7 +27,7 @@ void pickPhysicalDevice() {
 }
 ```
 
-Nous allons créer une variable du type `VkPhysicalDevice` qui vas stocker notre physical device. Il sera automatiquement détruit, donc on n'a pas besoin de passer par la fonction `cleanup`.
+Nous allons créer une variable du type `VkPhysicalDevice` qui vas stocker notre Physical Device. Il sera automatiquement détruit, donc on n'a pas besoin de passer par la fonction `cleanup`.
 
 ```cpp
 void pickPhysicalDevice() {
@@ -71,7 +71,7 @@ bool isDeviceSuitable(VkPhysicalDevice device) {
 }
 ```
 
-### Familles de queues \(queue families\) <a id="page_Familles-de-queues-queue-families"></a>
+### Queue Families <a id="page_Familles-de-queues-queue-families"></a>
 
 Créent une fonction `findQueueFamilies` qui vas nous permettre de trouver les fonction que nous voulions utiliser.
 
@@ -164,25 +164,21 @@ bool isDeviceSuitable(VkPhysicalDevice device) {
 }
 ```
 
-Voilà ce qui est du coté des périphériques physique et les QueueFamilies. Maintenant on vas passer aux périphériques Logique.
-
 **Vidéo / Code :**
 
 {% file src="../../.gitbook/assets/part-5-physical-devices-et-queue-families.cpp" %}
 
 {% embed url="https://youtu.be/AUV3yRiAwzg" %}
 
-\*\*\*\*
-
 ## Logical
 
-Comme toujours ajoutons une variable de type VkDevice dont on aura besoin plus tard.
+Comme toujours ajoutons une variable de type `VkDevice` dont on aura besoin plus tard.
 
 ```cpp
 VkDevice device;
 ```
 
-On vas créer une fonction `createLogicalDevice`. Ce logical device vas nous servir comme interface, Il se crée de la même manière qu'une "Instance".
+On vas créer une fonction `createLogicalDevice`. Ce Logical Device vas nous servir comme interface, il se crée de la même manière qu'une Instance.
 
 ```cpp
 void initVulkan() {
@@ -197,9 +193,9 @@ void createLogicalDevice() {
 }
 ```
 
-### Spécifier les queues à créer <a id="page_Spcifier-les-queues--crer"></a>
+### Spécifier les Queues à créer <a id="page_Spcifier-les-fonctionnalits-utilises"></a>
 
-Le logical device a aussi besoin des informations qu'il faut qu'on lui associes :
+Le Logical Device a aussi besoin des informations qu'il faut qu'on lui associes :
 
 ```cpp
 void createLogicalDevice() {
@@ -219,9 +215,9 @@ void createLogicalDevice() {
 }
 ```
 
-### Créer le logical device <a id="page_Crer-le-logical-device"></a>
+### Créer le Logical Device <a id="page_Crer-le-logical-device"></a>
 
-Une fois terminer avec la structure Queue on peut maintenant passer à la structure principale  qui s'appelle [`VkDeviceCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceCreateInfo.html).
+Une fois terminer avec la structure Queue on peut maintenant passer à la structure principale qui s'appelle `VkDeviceCreateInfo`.
 
 ```cpp
 void createLogicalDevice() {
@@ -257,7 +253,7 @@ void createLogicalDevice() {
 }
 ```
 
-Il ne faut pas oublier de le détruire avant le physical device:
+Il ne faut pas oublier de le détruire avant le Physical Device :
 
 ```cpp
 void cleanup() {
@@ -268,16 +264,11 @@ void cleanup() {
 
 ### Récupérer des références aux queues <a id="page_Rcuprer-des-rfrences-aux-queues"></a>
 
-Le type VkQueue va nous permete de stocker la reference de la queue family qui est compatible avec le graphisme. 
+Le type VkQueue va nous permete de stocker la référence de la Queue Family qui est compatible avec le graphisme. 
 
 ```cpp
-VkQueue graphicsQueue;
-
-//recuperer les references des queues
 vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 ```
-
-Maintenant qu'on a terminer avec les deux Devices et la gestion des Queues. On peut passer sur la mise en place des ressources pour pouvoir afficher ce qu'on veut sur notre fenêtre.
 
 **Vidéo / Code :**
 

@@ -6,11 +6,11 @@ description: >-
 
 # Pour aller plus loin
 
-Un dernier concept pour la route, qui va nous permettre de décrire et d'envoyé nos propre données aux shader \(Uniform Buffers, Sampler, Input Attachment ...\). Il s'agit des descriptors.
+Un dernier concept pour la route, qui va nous permettre de décrire et d'envoyer nos propres données aux shaders \(Uniform Buffers, Sampler, Input Attachment ...\). Il s'agit des descriptors.
 
 ## Descriptor Layout
 
-Pour commencer il faut créer un descriptor layout qui va permettre de fournir des informations sur chacun des descripteurs utilisés par les shaders lors de la création de la pipeline. Nous allons créer une fonction pour créer le descriptor layout.
+Pour commencer il faut créer un Descriptor Layout qui va permettre de fournir des informations sur chacun des descripteurs utilisés par les shaders lors de la création de la pipeline. Nous allons créer une fonction pour créer le Descriptor Layout.
 
 ```cpp
 void initVulkan() {
@@ -44,9 +44,9 @@ Les deux premiers champs permettent de fournir la valeur indiquée dans le shade
 uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 ```
 
-Nous devons aussi informer Vulkan des étapes shaders qui accéderont à cette ressource. Le champ de bits `stageFlags` permet de combiner toutes les étapes shader concernées. Nous mettons  `VK_SHADER_STAGE_VERTEX_BIT` qui indique que l'on envoye notre variable dans le vertex shader. Vous pouvez aussi fournir la valeur `VK_SHADER_STAGE_ALL_GRAPHICS` pour indiquer tout les types de shader.
+Nous devons aussi informer Vulkan des étapes shaders qui accéderont à cette ressource. Le champ de bits `stageFlags` permet de combiner toutes les étapes shader concernées. Nous mettons  `VK_SHADER_STAGE_VERTEX_BIT` qui indique que l'on envoie notre variable dans le vertex shader. Vous pouvez aussi fournir la valeur `VK_SHADER_STAGE_ALL_GRAPHICS` pour indiquer tout les types de shader.
 
-Tous les `VkDescriptorSetLayoutBinding` ainsi créé, sont ensuite combinés en un seul objet `VkDescriptorSetLayout`. Créez pour cela un nouveau membre :
+Tous les `VkDescriptorSetLayoutBinding` ainsi créés, sont ensuite combinés en un seul objet `VkDescriptorSetLayout`. Créez pour cela un nouveau membre :
 
 ```cpp
 VkDescriptorSetLayout descriptorSetLayout;
@@ -75,7 +75,7 @@ pipelineLayoutInfo.setLayoutCount = 1;
 pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
 ```
 
-A notez que l'on peut spécifier une liste de `VkDescriptorSetLayout` alors qu'un seul peut, à lui tout seul, inclure tous les `bindings` d'une pipeline. Nous y reviendrons tout de suite, quand nous nous intéresserons aux pools de descripteurs.
+À notez que l'on peut spécifier une liste de `VkDescriptorSetLayout` alors qu'un seul peut inclure tous les `bindings` d'une pipeline. Nous y reviendrons, quand nous nous intéresserons aux pools de descripteurs.
 
 Enfin, pour détruire notre nouvelle objet :
 
@@ -91,7 +91,7 @@ void cleanup() {
 
 ## Descriptor Pool
 
-Les DescriptorSet ne peuvent pas être crées directement. Il faut les allouer depuis une pool, comme les command buffers. Nous allons créer la fonction `createDescriptorPool` pour générer une pool de descripteurs.
+Les Descriptor Set ne peuvent pas être crées directement. Il faut les allouer depuis une pool, comme les Command Buffers. Nous allons créer la fonction `createDescriptorPool` pour générer une pool de descripteurs.
 
 ```cpp
 void initVulkan() {
@@ -117,7 +117,7 @@ poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size());
 ```
 
-Dans notre cas, c'est un descripteur par frame. Il n'est pas toujours nécessaire d'avoir autant de copie de DescriptorSet que d'images dans la SwapChain. Si notre valeur à envoyé au shader est statique ou persistente durant plusieurs frames, nous pouvons simplement allouer un seul DescriptorSet, pour le renvoyer a chaque frame. Par contre si les valeurs du DescriptorSet sont misent à jour à chaque frame, il faut en avoir autant de fois que d'images dans la SwapChain. La raison est que le rendu n'est pas immédiat, on construit un Command Buffer qui va être soumis au GPU, mais il n'est pas garantie que le Command Buffer soit executé immédiatement. Du coup, si nous modifions une valeur référencé par un DescriptorSet soumis au GPU mais non éxecuté, nous remplacons les données de la frame précédente par celle de la frame actuelle.
+Dans notre cas, c'est un descripteur par frame. Il n'est pas toujours nécessaire d'avoir autant de copie de Descriptor Set que d'images dans la Swap Chain. Si notre valeur a envoyer au shader est statique ou persistente durant plusieurs frames, nous pouvons simplement allouer un seul DescriptorSet, pour le renvoyer à chaque frame. Par contre si les valeurs du DescriptorSet sont misent à jour à chaque frame, il faut en avoir autant de fois que d'images dans la SwapChain. La raison est que le rendu n'est pas immédiat, on construit un Command Buffer qui va être soumis au GPU, mais il n'est pas garanti que la Command Buffer soit executée immédiatement. Du coup, si nous modifions une valeur référencée par un DescriptorSet soumis au GPU mais non éxecutée, nous remplaçons les données de la frame précédente par celle de la frame actuelle.
 
 Maintenant, créons une structure `VkDescriptorPoolCreateInfo` et référençons notre `poolSize` : 
 
@@ -128,7 +128,7 @@ poolInfo.poolSizeCount = 1;
 poolInfo.pPoolSizes = &poolSize;
 ```
 
-Nous devons aussi spécifier le nombre maximum de DescriptorSet que nous sommes susceptibles d'allouer.
+Nous devons aussi spécifier le nombre maximum de Descriptor Set que nous sommes susceptibles d'allouer.
 
 ```cpp
 poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size());
@@ -150,7 +150,7 @@ void createDescriptorPool() {
 }
 ```
 
-La pool doit être recréée en même temps que la SwapChain. On va donc la détruire dans `cleanupSwapChain`.
+La pool doit être recréée en même temps que la Swap Chain. On va donc la détruire dans `cleanupSwapChain`.
 
 ```cpp
 void cleanupSwapChain() {
@@ -178,7 +178,7 @@ void recreateSwapChain() {
 
 ## Descriptor Set
 
-Nous pouvons maintenant allouer les DescriptorSet. Créons pour cela la fonction `createDescriptorSets` :
+Nous pouvons maintenant allouer les Descriptor Set. Créons pour cela la fonction `createDescriptorSets` :
 
 ```cpp
 void initVulkan() {
@@ -195,7 +195,7 @@ void createDescriptorSets() {
 }
 ```
 
-L'allocation de cette ressource passe par la création d'une structure `VkDescriptorSetAllocateInfo`. Vous devez indiquer la DescriptorPool, le DescriptorLayout et le nombre de sets à créer :
+L'allocation de cette ressource passe par la création d'une structure `VkDescriptorSetAllocateInfo`. Vous devez indiquer la Descriptor Pool, le Descriptor Layout et le nombre de sets à créer :
 
 ```cpp
 std::vector<VkDescriptorSetLayout> layouts(swapChainImages.size(), descriptorSetLayout);
@@ -206,7 +206,7 @@ allocInfo.descriptorSetCount = static_cast<uint32_t>(swapChainImages.size());
 allocInfo.pSetLayouts = layouts.data();
 ```
 
-Créez le nouveau membre `descriptorPool`, ci dessous, et allouez les DescriptorSet avec `vkAllocateDescriptorSets` :
+Créez le nouveau membre `descriptorPool`, ci dessous, et allouez les Descriptor Set avec `vkAllocateDescriptorSets` :
 
 ```cpp
 VkDescriptorPool descriptorPool;
@@ -235,7 +235,7 @@ for (size_t i = 0; i < swapChainImages.size(); i++) {
 }
 ```
 
-La configuration des DescriptorSet sont maintenant possible, nous allons les mettre à jour à l'aide de la fonction `vkUpdateDescriptorSets`. Elle prend un tableau de `VkWriteDescriptorSet` en paramètre. Les deux premiers champs spécifient le set à mettre à jour et l'indice du binding auquel il correspond.
+La configuration des Descriptor Set sont maintenant possibles, nous allons les mettre à jour à l'aide de la fonction `vkUpdateDescriptorSets`. Elle prend un tableau de `VkWriteDescriptorSet` en paramètres. Les deux premiers champs spécifient le set à mettre à jour et l'indice du binding auquel il correspond.
 
 ```cpp
 VkWriteDescriptorSet descriptorWrite{};
@@ -257,7 +257,7 @@ Enfin, pour indiquer la valeur du descripteur, il faut compléter le champs  `pB
 descriptorWrite.pBufferInfo = &bufferInfo;
 ```
 
-Enfin, nous mettons à jour nos DescriptorSet :
+Enfin, nous mettons à jour nos Descriptor Set :
 
 ```cpp
 vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);

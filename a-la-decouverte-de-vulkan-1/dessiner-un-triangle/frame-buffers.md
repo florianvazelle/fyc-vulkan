@@ -1,8 +1,8 @@
 # Frame Buffers
 
-Nous avons beaucoup parlé de framebuffers dans les chapitres précédents, et nous avons mis en place la render pass pour qu'elle en accepte un du même format que les images de la swap chain. Pourtant nous n'en avons encore créé aucun.
+Nous avons beaucoup parlé de framebuffers dans les chapitres précédents, et nous avons mis en place la Render Pass pour qu'elle en accepte un du même format que les images de la swap chain. Pourtant nous n'en avons encore créé aucun.
 
-Les attachements de différents types spécifiés durant la render pass sont liés en les considérant dans des objets de type `VkFramebuffer`. Un tel objet référence toutes les `VkImageView` utilisées comme attachements par une passe. Dans notre cas nous n'en aurons qu'un : un attachement de couleur, qui servira de cible d'affichage uniquement. Cependant l'image utilisée dépendra de l'image fournie par la swap chain lors de la requête pour l'affichage. Nous devons donc créer un framebuffer pour chacune des images de la swap chain et utiliser le bon au moment de l'affichage.
+Les attachements de différents types spécifiés durant la Render Pass sont liés en les considérant dans des objets de type `VkFramebuffer`. Un tel objet référence toutes les `VkImageView` utilisées comme attachements par une passe. Dans notre cas nous n'en aurons qu'un : un attachment de couleur, qui servira de cible d'affichage uniquement. Cependant l'image utilisée dépendra de l'image fournie par la swap chain lors de la requête pour l'affichage. Nous devons donc créer un framebuffer pour chacune des images de la swap chain et utiliser le bon au moment de l'affichage.
 
 Pour cela créez un autre `std::vector` qui contiendra des framebuffers :
 
@@ -51,7 +51,7 @@ for (size_t i = 0; i < swapChainImageViews.size(); i++) {
 }
 ```
 
- Pour la destruction, une simple boucle qui parcoures l'ensemble des frame, dans `cleanup`, et un appel a la fonction `vkDestroyFramebuffer` comme ce ci :
+ Pour la destruction, une simple boucle qui parcoure l'ensemble des frame, dans `cleanup`, et un appel a la fonction `vkDestroyFramebuffer` comme ce ci :
 
 ```cpp
 void cleanup() {
