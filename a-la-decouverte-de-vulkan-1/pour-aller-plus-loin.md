@@ -6,28 +6,13 @@ description: >-
 
 # Pour aller plus loin
 
-Un dernier concept pour la route, qui va nous permettre de décrire et d'envoyer nos propres données aux shaders \(Uniform Buffers, Sampler, Input Attachment ...\). Il s'agit des descriptors.
+Un dernier concept pour la route, qui va nous permettre de décrire et d'envoyer nos propres données aux shaders \(Uniform Buffers, Sampler, Input Attachment ...\), il s'agit des descriptors. Pour expliquer brièvement, pour chaque binding de nos shaders, il va falloir en décrire le contenu attendu.
 
 ## Descriptor Layout
 
-Pour commencer il faut créer un Descriptor Layout qui va permettre de fournir des informations sur chacun des descripteurs utilisés par les shaders lors de la création de la pipeline. Nous allons créer une fonction pour créer le Descriptor Layout.
+Commençons par créer un Descriptor Layout qui va nous permettre de fournir des informations sur chacun des descripteurs. 
 
-```cpp
-void initVulkan() {
-    ...
-    createDescriptorSetLayout();
-    createGraphicsPipeline();
-    ...
-}
-
-...
-
-void createDescriptorSetLayout() {
-
-}
-```
-
-Chaque `binding` doit être décrit à l'aide d'une structure de type `VkDescriptorSetLayoutBinding`.
+ Pour chaque binding, explicitons-les en créant pour chacun une structure de type `VkDescriptorSetLayoutBinding`.
 
 ```cpp
 void createDescriptorSetLayout() {
@@ -35,79 +20,32 @@ void createDescriptorSetLayout() {
     uboLayoutBinding.binding = 0;
     uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     uboLayoutBinding.descriptorCount = 1;
+    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT; // définit le scope du binding
 }
 ```
 
-Les deux premiers champs permettent de fournir la valeur indiquée dans le shader avec `binding` et le type de descripteur auquel il correspond. Il est possible que la variable côté shader soit un tableau d'UBO, et dans ce cas il faut indiquer le nombre d'éléments qu'il contient dans le membre `descriptorCount`. 
-
-```cpp
-uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-```
-
-Nous devons aussi informer Vulkan des étapes shaders qui accéderont à cette ressource. Le champ de bits `stageFlags` permet de combiner toutes les étapes shader concernées. Nous mettons  `VK_SHADER_STAGE_VERTEX_BIT` qui indique que l'on envoie notre variable dans le vertex shader. Vous pouvez aussi fournir la valeur `VK_SHADER_STAGE_ALL_GRAPHICS` pour indiquer tout les types de shader.
-
-Tous les `VkDescriptorSetLayoutBinding` ainsi créés, sont ensuite combinés en un seul objet `VkDescriptorSetLayout`. Créez pour cela un nouveau membre :
+Tous les `VkDescriptorSetLayoutBinding` ainsi créés, sont ensuite combinés en un seul objet `VkDescriptorSetLayout` :
 
 ```cpp
 VkDescriptorSetLayout descriptorSetLayout;
 VkPipelineLayout pipelineLayout;
-```
 
-Nous pouvons créer cet objet à l'aide de la fonction `vkCreateDescriptorSetLayout`. Cette fonction prend en argument une structure de type `VkDescriptorSetLayoutCreateInfo`. Elle contient un tableau contenant nos `VkDescriptorSetLayoutBinding` :
-
-```cpp
-VkDescriptorSetLayoutCreateInfo layoutInfo{};
-layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-layoutInfo.bindingCount = 1;
-layoutInfo.pBindings = &uboLayoutBinding;
+VkDescriptorSetLayoutCreateInfo layoutInfo = {
+    .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+    .bindingCount = 1,
+    .pBindings = &uboLayoutBinding,
+};
 
 if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
     throw std::runtime_error("echec de la creation d'un set de descripteurs!");
 }
 ```
 
-Nous devons fournir cette structure à Vulkan durant la création de la pipeline graphique. Ils sont transmis par la structure `VkPipelineLayoutCreateInfo`. Modifiez ainsi la création de cette structure :
-
-```cpp
-VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-pipelineLayoutInfo.setLayoutCount = 1;
-pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
-```
-
-À notez que l'on peut spécifier une liste de `VkDescriptorSetLayout` alors qu'un seul peut inclure tous les `bindings` d'une pipeline. Nous y reviendrons, quand nous nous intéresserons aux pools de descripteurs.
-
-Enfin, pour détruire notre nouvelle objet :
-
-```cpp
-void cleanup() {
-    cleanupSwapChain();
-
-    vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
-
-    ...
-}
-```
+Ensuite, cette structure doit être référencé au moment où nous créeons la pipeline graphique.
 
 ## Descriptor Pool
 
-Les Descriptor Set ne peuvent pas être crées directement. Il faut les allouer depuis une pool, comme les Command Buffers. Nous allons créer la fonction `createDescriptorPool` pour générer une pool de descripteurs.
-
-```cpp
-void initVulkan() {
-    ...
-    createDescriptorSetLayout();
-    createGraphicsPipeline();
-    createDescriptorPool();
-    ...
-}
-
-...
-
-void createDescriptorPool() {
-
-}
-```
+Les Descriptor Set ne peuvent pas être crées directement. Il faut les allouer depuis une pool, comme les Command Buffers.
 
 Nous devons d'abord indiquer les types de descripteurs et combien sont compris dans les sets. Nous utilisons pour cela une structure du type `VkDescriptorPoolSize` :
 
@@ -178,22 +116,7 @@ void recreateSwapChain() {
 
 ## Descriptor Set
 
-Nous pouvons maintenant allouer les Descriptor Set. Créons pour cela la fonction `createDescriptorSets` :
-
-```cpp
-void initVulkan() {
-    ...
-    createDescriptorPool();
-    createDescriptorSets();
-    ...
-}
-
-...
-
-void createDescriptorSets() {
-
-}
-```
+Nous pouvons maintenant allouer les Descriptor Set.
 
 L'allocation de cette ressource passe par la création d'une structure `VkDescriptorSetAllocateInfo`. Vous devez indiquer la Descriptor Pool, le Descriptor Layout et le nombre de sets à créer :
 
