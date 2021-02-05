@@ -55,7 +55,7 @@ poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size());
 ```
 
-Dans notre cas, c'est un descripteur par frame. Il n'est pas toujours nécessaire d'avoir autant de copie de Descriptor Set que d'images dans la Swap Chain. Si notre valeur a envoyer au shader est statique ou persistente durant plusieurs frames, nous pouvons simplement allouer un seul DescriptorSet, pour le renvoyer à chaque frame. Par contre si les valeurs du DescriptorSet sont misent à jour à chaque frame, il faut en avoir autant de fois que d'images dans la SwapChain. La raison est que le rendu n'est pas immédiat, on construit un Command Buffer qui va être soumis au GPU, mais il n'est pas garanti que la Command Buffer soit executée immédiatement. Du coup, si nous modifions une valeur référencée par un DescriptorSet soumis au GPU mais non éxecutée, nous remplaçons les données de la frame précédente par celle de la frame actuelle.
+Dans notre cas, c'est un descripteur par frame. Il n'est pas toujours nécessaire d'avoir autant de copie de Descriptor Set que d'images dans la Swap Chain. Si notre valeur a envoyer au shader est statique ou persistente durant plusieurs frames, nous pouvons simplement allouer un seul DescriptorSet, pour le renvoyer à chaque frame. Par contre si les valeurs du DescriptorSet sont misent à jour à chaque frame, il faut en avoir autant de fois que d'images dans la SwapChain.
 
 Maintenant, créons une structure `VkDescriptorPoolCreateInfo` et référençons notre `poolSize` : 
 
@@ -118,7 +118,7 @@ void recreateSwapChain() {
 
 Nous pouvons maintenant allouer les Descriptor Set.
 
-L'allocation de cette ressource passe par la création d'une structure `VkDescriptorSetAllocateInfo`. Vous devez indiquer la Descriptor Pool, le Descriptor Layout et le nombre de sets à créer :
+L'allocation de cette ressource passe par la création d'une structure `VkDescriptorSetAllocateInfo`. Indiquons la Descriptor Pool, le Descriptor Layout et le nombre de sets à créer :
 
 ```cpp
 std::vector<VkDescriptorSetLayout> layouts(swapChainImages.size(), descriptorSetLayout);
@@ -129,7 +129,7 @@ allocInfo.descriptorSetCount = static_cast<uint32_t>(swapChainImages.size());
 allocInfo.pSetLayouts = layouts.data();
 ```
 
-Créez le nouveau membre `descriptorPool`, ci dessous, et allouez les Descriptor Set avec `vkAllocateDescriptorSets` :
+Créons le nouveau membre `descriptorPool`, ci dessous, et allouons les Descriptor Set avec `vkAllocateDescriptorSets` :
 
 ```cpp
 VkDescriptorPool descriptorPool;
@@ -147,7 +147,7 @@ void createDescriptorSets() {
 }
 ```
 
-Les descripteurs référant à un buffer doivent être configurés avec une structure `VkDescriptorBufferInfo`. Elle indique le buffer contenant les données, et où les données sont stockées.
+La structure `VkDescriptorBufferInfo` permet d'indiquer le buffer contenant les données :
 
 ```cpp
 for (size_t i = 0; i < swapChainImages.size(); i++) {
@@ -158,23 +158,18 @@ for (size_t i = 0; i < swapChainImages.size(); i++) {
 }
 ```
 
-La configuration des Descriptor Set sont maintenant possibles, nous allons les mettre à jour à l'aide de la fonction `vkUpdateDescriptorSets`. Elle prend un tableau de `VkWriteDescriptorSet` en paramètres. Les deux premiers champs spécifient le set à mettre à jour et l'indice du binding auquel il correspond.
+La configuration des Descriptor Set sont maintenant possibles, nous allons les mettre à jour à l'aide de la fonction `vkUpdateDescriptorSets`. Elle prend un tableau de `VkWriteDescriptorSet` en paramètres. 
 
 ```cpp
 VkWriteDescriptorSet descriptorWrite{};
 descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 descriptorWrite.dstSet = descriptorSets[i];
 descriptorWrite.dstBinding = 0;
-```
-
-Nous devons encore indiquer le type du descripteur. Il est possible de mettre à jour plusieurs descripteurs d'un même type en même temps. 
-
-```cpp
-descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; // le type du descripteur
 descriptorWrite.descriptorCount = 1;
 ```
 
-Enfin, pour indiquer la valeur du descripteur, il faut compléter le champs  `pBufferInfo` ou `pImageInfo` pour les descripteurs liés aux images.
+Enfin, pour indiquer la valeur du descripteur, il faut compléter le champs  `pBufferInfo` , ou `pImageInfo` pour les descripteurs liés aux images.
 
 ```cpp
 descriptorWrite.pBufferInfo = &bufferInfo;
