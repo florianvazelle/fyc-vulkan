@@ -55,7 +55,7 @@ poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size());
 ```
 
-Dans notre cas, c'est un descripteur par frame. Il n'est pas toujours nécessaire d'avoir autant de copie de Descriptor Set que d'images dans la Swap Chain. Si notre valeur a envoyer au shader est statique ou persistente durant plusieurs frames, nous pouvons simplement allouer un seul DescriptorSet, pour le renvoyer à chaque frame. Par contre si les valeurs du DescriptorSet sont misent à jour à chaque frame, il faut en avoir autant de fois que d'images dans la SwapChain.
+Dans notre cas, c'est un descripteur par frame. Il n'est pas toujours nécessaire d'avoir autant de copie de Descriptor Set que d'images dans la Swap Chain. Si notre valeur a envoyer au shader est statique ou persistant durant plusieurs frames, nous pouvons simplement allouer un seul DescriptorSet, pour le renvoyer à chaque frame. Par contre si les valeurs du DescriptorSet sont misent à jour à chaque frame, il faut en avoir autant de fois que d'images dans la SwapChain.
 
 Maintenant, créons une structure `VkDescriptorPoolCreateInfo` et référençons notre `poolSize` : 
 
