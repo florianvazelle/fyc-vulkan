@@ -141,6 +141,193 @@ vkQueuePresentKHR(presentQueue, &presentInfo); // émet la requête de présenta
 
 ## Recréation de la swap chain
 
+Nous voila avec ne application fonctionnelle d'où affichage d'un triangle dans une fenêtres. Mais il reste toujours des choses a améliorer. Dans ce projet on a prédéfini la taille de notre fenêtre et on a fait en sorte  de le verrouiller. Et si on voudrais redimensionner ou que la fenêtre sois adapter a notre écran comment ferait-on ? C'est dans cette dernière partie du chapitre que nous verrons la recréation de la swap chain pour que ca sois parfaitement adapter.
+
+On vas commencer par créer la fonction nommer  `recreateSwapChain` qui vas réutiliser la fonction  `createSwapChain` et tout les autre fonction qui sont en relation avec celle-ci :
+
+```cpp
+void recreateSwapChain() {
+    //Fonction prioritaire pour eviter les confllie 
+    //des ressources qui est entrain d'etres utiliser.
+    vkDeviceWaitIdle(device);  
+                              
+    createSwapChain();         //Logiquement la creation de la swapchain en 1er.
+    createImageViews();        //2eme car image depend de al swapchain.
+    createRenderPass();        //3eme depend du format des image.
+    createGraphicsPipeline();  //
+    createFramebuffers();      //        etc...
+    createCommandBuffers();    //
+}
+```
+
+Ajoutons une fonction  `cleanupSwapChain` pour êtres sure de l'avoir bien détruits avant de la recréer :
+
+```cpp
+void cleanupSwapChain() {
+/* ---------------- Code deplacer de la fonction "cleanup" ---------------- */
+    for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
+        vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
+    }
+
+    vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+
+    vkDestroyPipeline(device, graphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+    vkDestroyRenderPass(device, renderPass, nullptr);
+
+    for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+        vkDestroyImageView(device, swapChainImageViews[i], nullptr);
+    }
+
+    vkDestroySwapchainKHR(device, swapChain, nullptr);
+/* ---------------- Code deplacer de la fonction "cleanup" ---------------- */
+}
+```
+
+Voici a quoi ressemble la fonction `cleanup` après le déplacement du code. Il ne faut pas oublier de rajouter la fonction qu'on viens de créer `cleanupSwapChain` en premier pour question de redondance.
+
+```cpp
+void cleanup() {
+    cleanupSwapChain();    //fonction creer juste avant
+
+//  ------------------ Code restant ------------------
+    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+        vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
+        vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
+        vkDestroyFence(device, inFlightFences[i], nullptr);
+    }
+
+    vkDestroyCommandPool(device, commandPool, nullptr);
+
+    vkDestroyDevice(device, nullptr);
+
+    if (enableValidationLayers) {
+        DestroyDebugReportCallbackEXT(instance, callback, nullptr);
+    }
+
+    vkDestroySurfaceKHR(instance, surface, nullptr);
+    vkDestroyInstance(instance, nullptr);
+
+    glfwDestroyWindow(window);
+
+    glfwTerminate();
+}
+```
+
+Maintenant nous devons changer la méthode  `chooseSwapExtent` , pour avoir une meilleure gestion du redimensionnement:
+
+```cpp
+VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
+    if (capabilities.currentExtent.width != UINT32_MAX) {
+        return capabilities.currentExtent;
+    } else {
+        int width, height;
+        glfwGetFramebufferSize(window, &width, &height);
+
+        VkExtent2D actualExtent = {
+            static_cast<uint32_t>(width),
+            static_cast<uint32_t>(height)
+        };
+
+        ...
+    }
+}
+```
+
+### Appel de la swap chain
+
+Maintenant qu'on a les fonctions dont on a besoin il faut savoir ou les appeler. Tout simplement dans la fonction `drawFrame`juste après avoir reçus la prochaine image : 
+
+```cpp
+VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, 
+            imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+// VK_ERROR_OUT_OF_DATE_KHR permet de verifier 
+// si la swap chain ne correpond plus au surface de la fenetre alors on la recreer.
+if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+    recreateSwapChain();
+    return;
+} 
+//VK_SUBOPTIMAL_KHR est la pour verifier si la taille de la fenetre 
+//ne correspond plus a la swapchain, meme si la swapchain peut toujours etres utiliser.
+else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+    throw std::runtime_error("échec de la présentation d'une image à la swap chain!");
+}
+```
+
+### Explicitement gérer les redimensionnements
+
+Ici on aura besoin d'une variable qui a pour but de garantir la redimensionnement de la fenêtre :
+
+```cpp
+bool framebufferResized = false;
+
+...
+
+void drawFrame() {
+
+...
+// vkQueuePresentKHR permet d'avoir une meilleur resultat avec sa valeurs retourner
+result = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
+    framebufferResized = false;
+    recreateSwapChain();
+} else if (result != VK_SUCCESS) {
+    throw std::runtime_error("échec de la présentation d'une image!");
+}
+
+}
+```
+
+Il y a une fonction très utile qu'on vas utiliser ici c'est le  `glfwSetFrameBufferSizeCallback` qui vas nous permettre de savoir s'il y a eu une modification de la dimension de la fenêtre.
+
+```cpp
+void initWindow() {
+    glfwInit();
+
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+    window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+    glfwSetWindowUserPointer(window, this);
+    glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+}
+static void framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+
+}
+```
+
+Comme vous le voyer nous avons créer une fonction static pour`glfwSetFramebufferSizeCallback`, car la librairie GLFZ ne sait pas utiliser les fonction d'une classe avec this.
+
+```cpp
+static void framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+    auto app = reinterpret_cast<HelloTriangleApplication*>(glfwGetWindowUserPointer(window));
+    app->framebufferResized = true;
+}
+```
+
+Vous pouvez maintenant tester votre application en le lançant et d'essayer de redimensionner la fenêtre.
+
+### Gestion de la minimisation de la fenêtre <a id="page_Gestion-de-la-minimisation-de-la-fentre"></a>
+
+Il reste une toute dernière chose a optimiser, c'est lorsque la fenêtre est minimiser, cela peut créer un problème a la swap chain. C'est ainsi nous utilisons une solution toute bête c'est a dire le mettre en pause si la fenêtre est minimiser et de recréer la swap chain une fois que la fenêtre sera revenu.
+
+```cpp
+void recreateSwapChain() {
+    int width = 0, height = 0;
+    glfwGetFramebufferSize(window, &width, &height);
+    while (width == 0 || height == 0) {
+        glfwGetFramebufferSize(window, &width, &height);
+        glfwWaitEvents();
+    }
+
+    vkDeviceWaitIdle(device);
+
+    ...
+}
+```
+
+Je vous dit un grand bravo à tout ce qui on réussi a suivre jusqu'ici. Votre première application Vulkan est prête. Si vous voulez aller plus loin on vous a fournie plusieurs documentation et de site web sur Vulkan.
+
 {% file src="../../.gitbook/assets/part-17-recreation-de-la-swap-chain.cpp" %}
 
 {% embed url="https://youtu.be/3xSxc19OOEI" %}
