@@ -139,9 +139,9 @@ vkQueuePresentKHR(presentQueue, &presentInfo); // émet la requête de présenta
 
 {% embed url="https://youtu.be/xmKPSErwD6o" %}
 
-## Recréation de la swap chain
+## Recréation de la Swap Chain
 
-Nous voila avec ne application fonctionnelle d'où affichage d'un triangle dans une fenêtres. Mais il reste toujours des choses a améliorer. Dans ce projet on a prédéfini la taille de notre fenêtre et on a fait en sorte  de le verrouiller. Et si on voudrais redimensionner ou que la fenêtre sois adapter a notre écran comment ferait-on ? C'est dans cette dernière partie du chapitre que nous verrons la recréation de la swap chain pour que ca sois parfaitement adapter.
+Nous voila avec ne application fonctionnelle d'où affichage d'un triangle dans une fenêtres. Mais il reste toujours des choses a améliorer. Dans ce projet on a prédéfini la taille de notre fenêtre et on a fait en sorte  de le verrouiller. Et si on voudrais redimensionner ou que la fenêtre sois adapter a notre écran comment ferait-on ? C'est dans cette dernière partie du chapitre que nous verrons la recréation de la Swap Chain pour que ca sois parfaitement adapter.
 
 On vas commencer par créer la fonction nommer  `recreateSwapChain` qui vas réutiliser la fonction  `createSwapChain` et tout les autre fonction qui sont en relation avec celle-ci :
 
@@ -184,7 +184,7 @@ void cleanupSwapChain() {
 }
 ```
 
-Voici a quoi ressemble la fonction `cleanup` après le déplacement du code. Il ne faut pas oublier de rajouter la fonction qu'on viens de créer `cleanupSwapChain` en premier pour question de redondance.
+Voici a quoi ressemble la fonction `cleanup` après le déplacement du code. Il ne faut pas oublier de rajouter la fonction qu'on viens de créer`cleanupSwapChain` en premier pour question de redondance.
 
 ```cpp
 void cleanup() {
@@ -214,7 +214,7 @@ void cleanup() {
 }
 ```
 
-Maintenant nous devons changer la méthode  `chooseSwapExtent` , pour avoir une meilleure gestion du redimensionnement:
+Maintenant nous devons changer la méthode `chooseSwapExtent` , pour avoir une meilleure gestion du redimensionnement:
 
 ```cpp
 VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
@@ -234,7 +234,7 @@ VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
 }
 ```
 
-### Appel de la swap chain
+### Appel de la Swap Chain
 
 Maintenant qu'on a les fonctions dont on a besoin il faut savoir ou les appeler. Tout simplement dans la fonction `drawFrame`juste après avoir reçus la prochaine image : 
 
@@ -296,7 +296,7 @@ static void framebufferResizeCallback(GLFWwindow* window, int width, int height)
 }
 ```
 
-Comme vous le voyer nous avons créer une fonction static pour`glfwSetFramebufferSizeCallback`, car la librairie GLFZ ne sait pas utiliser les fonction d'une classe avec this.
+Comme vous le voyer nous avons créer une fonction static pour`glfwSetFramebufferSizeCallback`, car la librairie GLFW ne sait pas utiliser les fonction d'une classe avec this.
 
 ```cpp
 static void framebufferResizeCallback(GLFWwindow* window, int width, int height) {
@@ -309,7 +309,7 @@ Vous pouvez maintenant tester votre application en le lançant et d'essayer de r
 
 ### Gestion de la minimisation de la fenêtre <a id="page_Gestion-de-la-minimisation-de-la-fentre"></a>
 
-Il reste une toute dernière chose a optimiser, c'est lorsque la fenêtre est minimiser, cela peut créer un problème a la swap chain. C'est ainsi nous utilisons une solution toute bête c'est a dire le mettre en pause si la fenêtre est minimiser et de recréer la swap chain une fois que la fenêtre sera revenu.
+Il reste une toute dernière chose a optimiser, c'est lorsque la fenêtre est minimiser, cela peut créer un problème a la Swap Chain. C'est ainsi nous utilisons une solution toute bête c'est a dire le mettre en pause si la fenêtre est minimiser et de recréer la Swap Chain une fois que la fenêtre sera revenu.
 
 ```cpp
 void recreateSwapChain() {
