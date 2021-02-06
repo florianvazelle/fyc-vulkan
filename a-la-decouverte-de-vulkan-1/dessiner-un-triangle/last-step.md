@@ -1,43 +1,25 @@
 ---
 description: >-
-  Finissons et admirons le triangle que nous, et surtout vous, avez réussi à
-  afficher.
+  Finissons, en écrivant notre fonction qui permettra d'assembler le tout et
+  admirons le triangle que nous, et surtout vous, avez réussi à afficher.
 ---
 
 # La fin est proche
 
-## Main Loop
-
-Nous en avions déjà parlé, maintenant nous allons écrire notre fonction `drawFrame` qui sera exécuté à chaque frame pour en dessiner une.
-
-```cpp
-void mainLoop() {
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-        drawFrame();
-    }
-}
-
-...
-
-void drawFrame() {
-
-}
-```
-
 ## Synchronisation
 
-Le fonction `drawFrame` réalisera les opérations suivantes :
+Notre fonction doit réaliser trois étapes, pour assurer un rendu correct :
 
-* Acquérir une image depuis la Swap Chain
-* Exécuter le Command Buffer correspondant au Frame Buffer dont l'attachment est l'image obtenue
-* Retourner l'image à la Swap Chain pour présentation
+1. Récupérer une image de la Swap Chain
+2. Exécuter le Command Buffer qui correspond au rendu du Frame Buffer précédemment créé \(pour rappelle celui ci nous permettra d'obtenir l'image\)
+3. Retourner l'image à la Swap Chain pour affichage
 
-Chacune de ces actions n'est réalisée qu'avec un appel de fonction. Cependant ce n'est pas aussi simple : les opérations sont par défaut exécutées de manière asynchrones. La fonction retourne aussitôt que les opérations sont lancées, et par conséquent l'ordre d'exécution est indéfini. Cela nous pose problème car chacune des opérations que nous voulons lancer dépendent des résultats de l'opération la précédant.
+Mais tout de suite nous allons parler de synchronisation. En effet, Vulkan exécute de manière asynchrone nos opérations \(comme Nodejs ou autre\). C'est au développeur que reviens le rôle d'expliciter à quelle moment nous devons attendre la réalisation d'une opération. Pour cela il existe deux évènements de synchronisation :
 
-Il y a deux manières de synchroniser les évènements de la Swap Chain : les _fences_ et les _sémaphores_. Ces deux objets permettent d'attendre qu'une opération se termine en relayant un signal émis par un processus généré par la fonction à l'origine du lancement de l'opération.
+* les fences
+* les sémaphores
 
-Ils ont cependant une différence : l'état d'une fence peut être accédé depuis le programme à l'aide de fonctions telles que `vkWaitForFences` alors que les sémaphores ne le permettent pas. Les fences sont généralement utilisées pour synchroniser votre programme avec les opérations alors que les sémaphores synchronisent les opérations entre elles. Nous voulons synchroniser les queues, les commandes d'affichage et la présentation, donc les sémaphores nous conviennent le mieux.
+Les fences vont principalement servir a synchroniser notre programme avec nos opérations. Quant au sémaphores, elles permettent de synchroniser nos opérations entre elles. Ce sont les sémaphores que nous allons utilisez ici.
 
 ## Sémaphores
 
@@ -46,7 +28,7 @@ Nous aurons besoin de deux sémaphores :
 * un premier pour indiquer que l'acquisition de l'image s'est bien réalisée
 * un second pour prévenir de la fin du rendu et permettre à l'image d'être retournée dans la Swap Chain
 
-Créons deux membres données pour stocker ces sémaphores :
+Créons deux variables :
 
 ```cpp
 VkSemaphore imageAvailableSemaphore;
@@ -75,20 +57,37 @@ Nous pourrons par la suite les détruire avec `vkDestroySemaphore`.
 
 ## Dessiner une Frame
 
-### Swap Chain
-
-La toute première opération à réaliser dans `drawFrame` est d'acquérir une image depuis la Swap Chain. La Swap Chain étant une extension nous allons encore devoir utiliser des fonction suffixées de `KHR` :
+Maintenant nous allons écrire notre fonction `drawFrame` .
 
 ```cpp
-void drawFrame() {
-    uint32_t imageIndex;
-    vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+void mainLoop() {
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+        drawFrame();
+    }
 }
+
+...
+
+void drawFrame() {
+
+}
+```
+
+Et pour écrire cette fonction, suivons donc les étapes explicité plus haut.
+
+### Swap Chain
+
+Pour commencer, récupèrons une image de la Swap Chain :
+
+```cpp
+uint32_t imageIndex;
+vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
 ```
 
 ### Command Buffer
 
-L'envoi à la queue et la synchronisation de celle-ci sont configurés à l'aide de paramètres dans la structure `VkSubmitInfo` que nous allons remplir.
+L'envoi à la queue et la synchronisation de celle-ci sont configurés à l'aide de paramètres dans la structure `VkSubmitInfo` :
 
 ```cpp
 VkSemaphore waitSemaphores[] = {imageAvailableSemaphore};
@@ -113,7 +112,7 @@ if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) 
 
 ### Présentation
 
-La dernière étape pour l'affichage consiste à envoyer le résultat à la Swap Chain. La présentation est configurée avec une structure de type `VkPresentInfoKHR`, et nous ferons cela à la fin de la fonction `drawFrame`.
+Pour finir, affichons notre image. Pour cela il faut envoyer le résultat à la Swap Chain. Pour configurer la présentation, configurons une structure de type `VkPresentInfoKHR` :
 
 ```cpp
 VkSwapchainKHR swapChains[] = {swapChain};
