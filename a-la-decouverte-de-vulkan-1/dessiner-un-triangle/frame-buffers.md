@@ -8,7 +8,7 @@ Mais ce n'est pas obligatoire, par exemple, vous pouvez rendre une texture en cr
 
 ## Création
 
-Pour cela créez un `std::vector<VkFramebuffer> swapChainFramebuffers` et redimensionnons le  afin qu'il puisse stocker tous les Frame Buffers :
+Pour cela créons un `std::vector<VkFramebuffer> swapChainFramebuffers` et redimensionnons le  afin qu'il puisse stocker tous les Frame Buffers :
 
 ```cpp
 void createFramebuffers() {

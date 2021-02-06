@@ -4,7 +4,7 @@ Les queues sont les composants qui vont traiter les différentes tâches de l'ap
 
 Les Command Buffers ne sont pas crée directement, ils doivent être alloué par des Command Pools. Pour créer une Command Pool, on utilise la fonction `vkCreateCommandPool()`. 
 
-```text
+```cpp
 VkResult vkCreateCommandPool(
     VkDevice                                    device,
     const VkCommandPoolCreateInfo*              pCreateInfo,
@@ -14,7 +14,7 @@ VkResult vkCreateCommandPool(
 
 On renseigne le device qui possédera la nouvelle pool ainsi qu'un pointeur vers  les informations de création de la pool.
 
-```text
+```cpp
 typedef struct VkCommandPoolCreateInfo {
     VkStructureType             sType;
     const void*                 pNext;
@@ -29,7 +29,7 @@ Préciser le bon type d'allocation mémoire permet d'éviter la fragmentation ca
 
 A la fin du programme il faudra également désallouer la mémoire allouée pour ces command pools avec la fonction `vkDestroyCommandPool()`.
 
-```text
+```cpp
 void vkDestroyCommandPool(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
@@ -38,7 +38,7 @@ void vkDestroyCommandPool(
 
 Une fois que la command Pool est crée, on peut finalement allouer des command Buffers qui servirons à empiler nos traitements. Pour cela on utilise la fonction `vkAllocateCommandBuffers()`.
 
-```text
+```cpp
 VkResult vkAllocateCommandBuffers(
     VkDevice                                    device,
     const VkCommandBufferAllocateInfo*          pAllocateInfo,
@@ -49,7 +49,7 @@ La fonction prend en paramètre le device ainsi que les informations d'allocatio
 
 Pour spécifier les paramètres d'allocation, on utilise la structure `VkCommandBufferAllocateInfo`.
 
-```text
+```cpp
 typedef struct VkCommandBufferAllocateInfo {
     VkStructureType         sType;
     const void*             pNext;
@@ -63,15 +63,13 @@ Ici les paramètres sont assez explicites, on passe la command Pool sur laquelle
 
 Après utilisation, les command buffers doivent être désalloués de la mémoire. On utilise la fonction `vkFreeCommandBuffers()`.
 
-```text
+```cpp
 void vkFreeCommandBuffers(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
     uint32_t                                    commandBufferCount,
     const VkCommandBuffer*                      pCommandBuffers);
 ```
-
-
 
 **Vidéo / Code :**
 
