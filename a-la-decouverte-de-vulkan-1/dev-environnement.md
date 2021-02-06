@@ -11,7 +11,7 @@ description: >-
 
 ### C++
 
-Tout d'abord, le langage que nous allons utiliser pour ce tutoriel est le C++. Il est possible de développer des applications Vulkan dans d’autres langages, s'il existe le bindings pour. Cependant, il est généralement déconseillé d’utiliser d’autres langages de programmation. En effet, l’API Vulkan est développé en C et cela fait donc plus d'appels de fonctions étrangères dans le C-land. Pour les langages qui sont interprétés \(à l'exception de Rust, par exemple\), la surcharge des appels de fonctions supplémentaires s'additionne et compense potentiellement les gains de performance que vous avez hypothétiquement réalisés avec Vulkan, en premier lieu.
+Tout d'abord, le langage que nous allons utiliser pour ce tutoriel est le C++. Il est possible de développer des applications Vulkan dans d’autres langages. Cependant, il est généralement déconseillé d’utiliser d’autres langages de programmation. En effet, l’API Vulkan est développé en C et cela fait donc plus d'appels de fonctions étrangères dans le C-land. Pour les langages qui sont interprétés \(à l'exception de Rust, par exemple\), la surcharge des appels de fonctions supplémentaires s'additionne et compense potentiellement les gains de performance que vous avez hypothétiquement réalisés avec Vulkan, en premier lieu.
 
 Enfin, il est important de préciser qu'il existe une API Vulkan en C++ que l'on peut retrouver dans le répertoire [Vulkan-Hpp](https://github.com/KhronosGroup/Vulkan-Hpp). Cette API a pour objectif d'ajouter des fonctionnalités telles que la sécurité de type pour les énumérations et les champs de bits, la prise en charge des conteneurs STL.
 
