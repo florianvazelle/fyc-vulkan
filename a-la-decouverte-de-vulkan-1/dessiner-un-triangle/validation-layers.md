@@ -21,7 +21,7 @@ Mieux encore, les couches de validation ne recherchent pas seulement les violati
 
 Nous allons maintenant préparer notre instance pour utiliser les couches de validation. 
 
-Mais ajoutons d'abord deux variables spécifiant les layers à activer et si le programme doit, en effet, les activer. Nous avons choisi d'effectuer ce choix selon si le programme est compilé en mode debug ou non. La macro `NDEBUG` fait partie du standard C++ et correspond au second cas.
+Nous avons choisi d'effectuer ce choix selon si le programme est compilé en mode debug ou non. La macro `NDEBUG` fait partie du standard C++ et correspond au second cas.
 
 ```cpp
 const uint32_t WIDTH = 800;
