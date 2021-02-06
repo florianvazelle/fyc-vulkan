@@ -139,6 +139,8 @@ vkQueuePresentKHR(presentQueue, &presentInfo); // émet la requête de présenta
 
 {% embed url="https://youtu.be/xmKPSErwD6o" %}
 
+## Recréation de la swap chain
+
 {% file src="../../.gitbook/assets/part-17-recreation-de-la-swap-chain.cpp" %}
 
 {% embed url="https://youtu.be/3xSxc19OOEI" %}
