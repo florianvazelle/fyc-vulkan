@@ -45,9 +45,9 @@ Ensuite, cette structure doit être référencé au moment où nous créeons la 
 
 ## Descriptor Pool
 
-Les Descriptor Set ne peuvent pas être crées directement. Il faut les allouer depuis une pool, comme les Command Buffers.
+Les Descriptor Set ne peuvent pas être créés directement. En effet, il va d'abord falloir créer des pool, comme les Command Buffers.
 
-Nous devons d'abord indiquer les types de descripteurs et combien sont compris dans les sets. Nous utilisons pour cela une structure du type `VkDescriptorPoolSize` :
+Nous devons d'abord indiquer les types de descripteurs et combien sont compris dans les sets :
 
 ```cpp
 VkDescriptorPoolSize poolSize{};
