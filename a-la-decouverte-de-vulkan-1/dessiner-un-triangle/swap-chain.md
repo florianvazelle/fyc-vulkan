@@ -12,10 +12,6 @@ Cette Swap Chain va servir à préparer les rendus d'images avant de les affiche
 
 Avant de créer la Swap Chain à proprement parlé, on doit récupérer certaines informations et contraintes que l'on désire. Le tout sera ensuite injecté dans la fonction de création de celle-ci. Parmi ces informations se trouve la surface,  le nombre d'images minimum, le format d'image, le format de couleur …
 
-> récupérer des informations : oui
->
-> récupérer des contraintes : ??
-
 ```cpp
 VkSwapchainCreateInfoKHR createInfo = {
     .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
