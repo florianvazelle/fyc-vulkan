@@ -77,7 +77,7 @@ Créent une fonction `findQueueFamilies` qui vas nous permettre de trouver les f
 
 ```cpp
 uint32_t findQueueFamilies(VkPhysicalDevice device) {
-    // Code servant à trouver la famille de queue "graphique"
+    ...
 }
 ```
 
@@ -110,14 +110,6 @@ struct QueueFamilyIndices {
         return graphicsFamily.has_value();
     }
 };
-
-QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
-    QueueFamilyIndices indices;
-
-    // Assigne l'index aux familles qui ont pu être trouvées
-
-    return indices;
-}
 ```
 
  On peut maintenant commencer à implémenter `findQueueFamilies`:
