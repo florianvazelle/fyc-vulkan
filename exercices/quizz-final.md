@@ -60,9 +60,15 @@ Une seule réponse est correct
 9\) Lors de la recréation de la Swap Chain, faut il recréer :
 
 * a\) Seulement la Swap Chain
-* b\) Tout les élements où la Swap Chain est utilisée
-* c\) Tout les élements de notre application
+* b\) Tout les éléments où la Swap Chain est utilisée
+* c\) Tout les éléments de notre application
 * d\) Rien, cela ce fait automatiquement
+
+10\) Qu'est ce que contient un Pipeline Layout ?
+
+* a\) Des informations sur les entrées d'un shader
+* b\) Des informations sur l'organisation des ressources d'un Pipeline
+* c\) Un, ou des, Graphic Pipeline
 {% endtab %}
 
 {% tab title="Réponses" %}
@@ -82,7 +88,7 @@ Une seule réponse est correct
 
 8\) Réponse d
 
-9\) Réponse d
+9\) Réponse b
 {% endtab %}
 {% endtabs %}
 
