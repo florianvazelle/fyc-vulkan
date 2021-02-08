@@ -45,7 +45,7 @@ Une seule réponse est correct
 * b. SDL
 * c. WSI
 
-7\) Avec Vulkan, somme nous obliger de créer une fenêtre ?
+7\) Avec Vulkan, somme nous obligé de créer une fenêtre ?
 
 * a. Oui
 * b. Non

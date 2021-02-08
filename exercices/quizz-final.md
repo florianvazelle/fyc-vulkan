@@ -42,6 +42,13 @@ Une seule réponse est correct
 * b\) Compréhension
 * c\) Simplification
 * d\) Interopérabilité
+
+7\) Quel est le composant qui traite les commandes ?
+
+* a\) Le Device
+* b\) La Swap Chain
+* c\) La Queue
+* d\) La Command Pool
 {% endtab %}
 
 {% tab title="Réponses" %}
