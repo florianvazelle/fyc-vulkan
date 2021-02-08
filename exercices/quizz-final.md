@@ -49,6 +49,13 @@ Une seule réponse est correct
 * b\) La Swap Chain
 * c\) La Queue
 * d\) La Command Pool
+
+8\) Quel est le rôle de la Swap Chain
+
+* a\) Afficher la prochaine image
+* b\) Gérer la chaine d'extension du Device
+* c\) Envoyer une chaine de commandes
+* d\) Préparer une liste d'image sur lesquelles on peut travailler avant l'affichage
 {% endtab %}
 
 {% tab title="Réponses" %}
