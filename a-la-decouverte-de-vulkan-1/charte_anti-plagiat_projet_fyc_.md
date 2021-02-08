@@ -1,6 +1,8 @@
 # Charte\_anti-plagiat\_Projet\_FYC\_
 
-**ANNEXE 2 - LA CHARTE DE L’ETUDIANT : LE PLAGIAT – A REMETTRE AVEC LA VERSION FINALE IMPRIMEE DU PROJET FYC**
+![](../.gitbook/assets/600_484801330.jpeg)
+
+**ANNEXE 2 - LA CHARTE DE L’ETUDIANT : LE PLAGIAT – A REMETTRE AVEC LA VERSION FINALE IMPRIMEE DU PROJET FYC**  
 
 La contrefaçon est l’appellation juridique du plagiat, sa version condamnable. A ce titre, elle constitue un délit. L’article 335-3 du Code de la propriété intellectuelle en précise la nature : il s’agit de " toute reproduction, représentation ou diffusion, par quelque moyen que ce soit, d’une œuvre de l’esprit en violation des droits d’auteur, tels qu’ils sont définis et réglementés par la loi". Elle est susceptible de donner lieu à des sanctions civiles et pénales.
 
