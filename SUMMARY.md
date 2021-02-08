@@ -21,6 +21,7 @@
 * [Pour aller plus loin](a-la-decouverte-de-vulkan-1/pour-aller-plus-loin.md)
 * [Références](a-la-decouverte-de-vulkan-1/references.md)
 * [Charte\_anti-plagiat\_Projet\_FYC\_](a-la-decouverte-de-vulkan-1/charte_anti-plagiat_projet_fyc_.md)
+* [Annexe](a-la-decouverte-de-vulkan-1/annexe.md)
 
 ## Exercices
 
