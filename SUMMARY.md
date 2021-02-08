@@ -20,7 +20,6 @@
   * [La fin est proche](a-la-decouverte-de-vulkan-1/dessiner-un-triangle/last-step.md)
 * [Pour aller plus loin](a-la-decouverte-de-vulkan-1/pour-aller-plus-loin.md)
 * [Références](a-la-decouverte-de-vulkan-1/references.md)
-* [Annexe](a-la-decouverte-de-vulkan-1/annexe.md)
 
 ## Exercices
 
