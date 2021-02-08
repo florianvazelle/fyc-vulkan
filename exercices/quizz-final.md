@@ -70,6 +70,10 @@ Une seule réponse est correct
 5\) Réponse a
 
 6\) Réponse d
+
+7\) Réponse c
+
+8\) Réponse d
 {% endtab %}
 {% endtabs %}
 
