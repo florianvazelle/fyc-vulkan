@@ -63,7 +63,7 @@ Une seule réponse est correct
 * b. Erreurs de plage et de format
 * c. Erreurs de validité et d'éxécution
 
-10\) Que permet la SwapChain ?
+10\) Que permet la Swap Chain ?
 
 * a. Permettre à Vulkan de dessiner une image
 * b. Synchroniser la présentation avec le rafraîchissement de l'écran

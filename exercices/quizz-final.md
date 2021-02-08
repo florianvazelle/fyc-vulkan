@@ -36,7 +36,7 @@ Une seule réponse est correct
 * b\) `VkPipelineInputAssemblyStateCreateInfo`
 * c\) `VkPipelineRasterizationStateCreateInfo`
 
-6\) Quelle est l’intérêt de compiler les shaders ?
+6\) Quel est l’intérêt de compiler les shaders ?
 
 * a\) Optimisation
 * b\) Compréhension
@@ -50,12 +50,19 @@ Une seule réponse est correct
 * c\) La Queue
 * d\) La Command Pool
 
-8\) Quel est le rôle de la Swap Chain
+8\) Quel est le rôle de la Swap Chain ?
 
 * a\) Afficher la prochaine image
 * b\) Gérer la chaine d'extension du Device
 * c\) Envoyer une chaine de commandes
 * d\) Préparer une liste d'image sur lesquelles on peut travailler avant l'affichage
+
+9\) Lors de la recréation de la Swap Chain, faut il recréer :
+
+* a\) Seulement la Swap Chain
+* b\) Tout les élements où la Swap Chain est utilisée
+* c\) Tout les élements de notre application
+* d\) Rien, cela ce fait automatiquement
 {% endtab %}
 
 {% tab title="Réponses" %}
@@ -74,6 +81,8 @@ Une seule réponse est correct
 7\) Réponse c
 
 8\) Réponse d
+
+9\) Réponse d
 {% endtab %}
 {% endtabs %}
 
